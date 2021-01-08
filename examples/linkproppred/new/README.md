@@ -21,22 +21,22 @@ python run.py --do_train --cuda --do_valid --do_test --evaluate_train \
 
 
 Modes:
--m read_triples   -- \<file\> is text lines each with head,relation,tail 
--m read_two_files -- \<file\> is a directory containing two files,
+* -m read_triples   -- \<file\> is text lines each with head,relation,tail 
+* -m read_two_files -- \<file\> is a directory containing two files,
    		     edge.csv and edge_reltype.csv .  This is the form of
 		     the OGB raw data.
--m random_gnp	  -- generate a random graph using parameters
+* -m random_gnp	  -- generate a random graph using parameters
    		     --n_vertices N --edge_probability p --n_relations R
 
 ## Modifications to apply to the graph
 
---subsample \<fraction\>
---test_upto N     -- testset will be sampled only from links 0 to N-1.
---shuffle_edge_types \<fraction\> 
---collapse_edge_types N -- apply (modulo N) to the relation types
+* --subsample \<fraction\>
+* --test_upto N     -- testset will be sampled only from links 0 to N-1.
+* --shuffle_edge_types \<fraction\> 
+* --collapse_edge_types N -- apply (modulo N) to the relation types
 
---map_node_file \<dictfile\>
---map_relation_file \<dictfile\>
+* --map_node_file \<dictfile\>
+* --map_relation_file \<dictfile\>
 		    These files consist of lines index,name
 		    converts the string "name" in a triple to the number "index".
 
