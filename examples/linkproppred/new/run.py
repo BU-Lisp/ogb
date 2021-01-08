@@ -1,0 +1,1 @@
+../wikikg2/run.py
