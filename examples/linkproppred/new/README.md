@@ -4,6 +4,9 @@
 python convertkg.py <new-dataset> -m <mode> -f <file> <options ...>
 
 Creates a directory dataset_<name> based on the data from <file> .
+For example,
+
+python convertkg.py ogbl-ran1 -m read_triples -f random_graph_1.csv
 
 To use the dataset,
 python run.py --dataset <name> ...
