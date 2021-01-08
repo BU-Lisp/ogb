@@ -4,12 +4,21 @@
 python convertkg.py <new-dataset> -m <mode> -f <file> <options ...>
 
 Creates a directory dataset_<name> based on the data from <file> .
+The "mapping..." directory it creates is temporary and can be deleted.
+
+To use the dataset,
+python run.py --dataset <name> ...
+
 For example,
 
 python convertkg.py ogbl-ran1 -m read_triples -f random_graph_1.csv
 
-To use the dataset,
-python run.py --dataset <name> ...
+python run.py --do_train --cuda --do_valid --do_test --evaluate_train \
+  --dataset ogbl-ran1 \
+  --model TransE -n 128 -b 512 -d $dim -g $gamma -a 1.0 -adv \
+  -lr 0.0001 --max_steps 50000 --cpu_num 2 --test_batch_size 32 
+
+
 
 Modes:
 -m read_triples   -- <file> is text lines each with head,relation,tail 

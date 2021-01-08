@@ -33,7 +33,7 @@ def parse_args(args=None):
     )
 
     parser.add_argument('--cuda', action='store_true', help='use GPU')
-    parser.add_argument('--meta_dict', type=str, default='', help='name of diction    
+    parser.add_argument('--meta_dict', type=str, default='', help='name of dictionary')
     parser.add_argument('--do_train', action='store_true')
     parser.add_argument('--do_valid', action='store_true')
     parser.add_argument('--do_test', action='store_true')
