@@ -33,7 +33,7 @@ def parse_args(args=None):
     )
 
     parser.add_argument('--cuda', action='store_true', help='use GPU')
-    
+    parser.add_argument('--meta_dict', type=str, default='', help='name of diction    
     parser.add_argument('--do_train', action='store_true')
     parser.add_argument('--do_valid', action='store_true')
     parser.add_argument('--do_test', action='store_true')
@@ -165,8 +165,21 @@ def main(args):
     
     # Write logs to checkpoint and console
     set_logger(args)
-    
-    dataset = LinkPropPredDataset(name = args.dataset)
+
+    if args.meta_dict=='':
+        meta = 'dataset_' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
+        if os.path.exists(meta):
+            args.meta_dict = meta
+        
+    if args.meta_dict!='':
+        meta_dict = torch.load(args.meta_dict)
+        print( meta_dict )
+        dataset = LinkPropPredDataset(name = args.dataset, metric=args.evaluator, meta_dict=meta_dict)
+    else:
+        meta_dict = None
+        dataset = LinkPropPredDataset(name = args.dataset, metric=args.evaluator)
+
+
     split_dict = dataset.get_edge_split()
     nentity = dataset.graph['num_nodes']
     nrelation = int(max(dataset.graph['edge_reltype'])[0])+1
