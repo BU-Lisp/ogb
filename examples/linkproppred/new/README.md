@@ -3,7 +3,7 @@
 
 python convertkg.py <new-dataset> -m <mode> -f <file> <options ...>
 
-Creates a directory dataset_<name> based on the data from <file> .
+Creates a directory dataset_[name] based on the data from [file] .
 The "mapping..." directory it creates is temporary and can be deleted.
 
 To use the dataset,
