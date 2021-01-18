@@ -7,6 +7,7 @@ from __future__ import print_function
 import logging
 
 import numpy as np
+import re
 
 import torch
 import torch.nn as nn
@@ -22,8 +23,15 @@ class KGEModel(nn.Module):
     def __init__(self, model_name, nentity, nrelation, hidden_dim, gamma, evaluator,
                  double_entity_embedding=False, double_relation_embedding=False):
         super(KGEModel, self).__init__()
+        (model_name,count_FR) = re.subn('FR$','',model_name)
+        (model_name,count_XR) = re.subn('XR$','',model_name)
         self.model_name = model_name
         self.nentity = nentity
+        if count_XR > 0:
+            self.Mrelations = 0
+            nrelation = 1
+        else:
+            self.Mrelations = 1
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
@@ -52,7 +60,8 @@ class KGEModel(nn.Module):
         nn.init.uniform_(
             tensor=self.relation_embedding, 
             a=-self.embedding_range.item(), 
-            b=self.embedding_range.item()
+            b=self.embedding_range.item(),
+            requires_grad = count_FR==0
         )
         
         if model_name in ['TuckER', 'Groups']:
@@ -103,7 +112,7 @@ class KGEModel(nn.Module):
             relation = torch.index_select(
                 self.relation_embedding, 
                 dim=0, 
-                index=sample[:,1]
+                index=sample[:,1] * self.Mrelations
             ).unsqueeze(1)
             
             tail = torch.index_select(
@@ -125,7 +134,7 @@ class KGEModel(nn.Module):
             relation = torch.index_select(
                 self.relation_embedding, 
                 dim=0, 
-                index=tail_part[:, 1]
+                index=tail_part[:, 1] * self.Mrelations
             ).unsqueeze(1)
             
             tail = torch.index_select(
@@ -147,7 +156,7 @@ class KGEModel(nn.Module):
             relation = torch.index_select(
                 self.relation_embedding,
                 dim=0,
-                index=head_part[:, 1]
+                index=head_part[:, 1] * self.Mrelations
             ).unsqueeze(1)
             
             tail = torch.index_select(
