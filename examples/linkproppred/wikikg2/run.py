@@ -41,6 +41,7 @@ def parse_args(args=None):
     parser.add_argument('--evaluate_train', action='store_true', help='Evaluate on training data')
     
     parser.add_argument('--dataset', type=str, default='ogbl-wikikg2', help='dataset name, default to wikikg2')
+    parser.add_argument('--split', default='', type=str)
     parser.add_argument('--model', default='TransE', type=str)
     parser.add_argument('-de', '--double_entity_embedding', action='store_true')
     parser.add_argument('-dr', '--double_relation_embedding', action='store_true')
@@ -84,7 +85,7 @@ def override_config(args):
     with open(os.path.join(args.init_checkpoint, 'config.json'), 'r') as fjson:
         argparse_dict = json.load(fjson)
     
-    args.dataset = argparse_dict['dataset']
+#    args.dataset = argparse_dict['dataset']
     args.model = argparse_dict['model']
     args.double_entity_embedding = argparse_dict['double_entity_embedding']
     args.double_relation_embedding = argparse_dict['double_relation_embedding']
@@ -181,7 +182,10 @@ def main(args):
         dataset = LinkPropPredDataset(name = args.dataset)
 
 
-    split_dict = dataset.get_edge_split()
+    if args.split!='':
+        split_dict = dataset.get_edge_split(split_type=args.split)
+    else:
+        split_dict = dataset.get_edge_split()
     nentity = dataset.graph['num_nodes']
     nrelation = int(max(dataset.graph['edge_reltype'])[0])+1
 
