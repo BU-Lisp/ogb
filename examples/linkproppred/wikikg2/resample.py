@@ -1,5 +1,7 @@
 '''
 Resample the test set negatives.
+Note that the negatives will generally be ordered -
+it would be easy to shuffle them, but this seems ok for the evaluators we have.
 '''
 
 import pandas as pd
@@ -29,7 +31,6 @@ all = set()
 
 
 # return N samples of field f for relation r
-# remove those for which (x,r,v) or (v,r,x) is in the graph
 def sample(N,f,r,v,ex=extra):
     Nr = int(N * fract)
     Nt = int(N * ex)
@@ -38,10 +39,13 @@ def sample(N,f,r,v,ex=extra):
     else:
         sl = ht[f][r]
     sl = sl + random.sample( at[f], Nt-len(sl) )
+    # remove those for which (x,r,v) or (v,r,x) is in the graph
     if f=='head':
         sl = [x for x in sl if (x,r,v) not in all]
     else:
         sl = [x for x in sl if (v,r,x) not in all]
+    # remove duplicates
+    sl = list(set(sl))
     if len(sl) < N:
         print( 'error: too few negs', len(sl), 'for item', f, r, v, 'try again' )
         sl = sample(N,f,r,v,ex*ex*N/(len(sl)+1))
