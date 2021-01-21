@@ -18,21 +18,15 @@ newsplit = 'byrel'
 
 fract = 0.5 # fraction to take which are tails of the relation
 extra = 1.1 # extra sample so that we can exclude triples in the graph
-<<<<<<< HEAD
 maxN = 500
-=======
->>>>>>> 7694f516e9dee98f534eb80f5feeb13979dd7031
 
 if make_data:
     train = torch.load(data_in+'/split/time/train.pt' )
     valid = torch.load(data_in+'/split/time/valid.pt' )
 test  = torch.load(data_in+'/split/time/test.pt' )
 
-<<<<<<< HEAD
 print( 'read in' )
 
-=======
->>>>>>> 7694f516e9dee98f534eb80f5feeb13979dd7031
 heads = dict()
 tails = dict()
 ht = {'head':heads, 'tail':tails}
@@ -86,13 +80,9 @@ tailkeys = dict()
 if make_data:
     for r in heads.keys():
         headkeys[r] = sorted(heads[r].keys(), key=heads[r].__getitem__, reverse=True)
-<<<<<<< HEAD
         del headkeys[r][maxN:]
         tailkeys[r] = sorted(tails[r].keys(), key=tails[r].__getitem__, reverse=True)
         del tailkeys[r][maxN:]
-=======
-        tailkeys[r] = sorted(tails[r].keys(), key=tails[r].__getitem__, reverse=True)
->>>>>>> 7694f516e9dee98f534eb80f5feeb13979dd7031
 #    with open('est.data','w') as out:
 #        pickle.dump( [ heads, tails, headkeys, tailkeys ], out )
 else:
@@ -107,10 +97,6 @@ ttotals = {t: sum(tails[t].values()) for t in tails.keys()}
 
 # estimate Hits@N and MRR for the testset
 
-<<<<<<< HEAD
-=======
-maxN = 100
->>>>>>> 7694f516e9dee98f534eb80f5feeb13979dd7031
 hits = {'head':np.zeros(maxN+1),'tail':np.zeros(maxN+1)}
 MRRsum = {'head':0, 'tail':0}
 absent = {'head':0, 'tail':0}
@@ -124,7 +110,6 @@ for i in range(test['head'].shape[0]):
             absent[f] += 1
         else:
             present[f] += 1 
-<<<<<<< HEAD
             if test[f][i] in hkt[f][r]:
                 rank = hkt[f][r].index(test[f][i])
                 if i % 100 == 1:
@@ -132,15 +117,6 @@ for i in range(test['head'].shape[0]):
                 for j in range(rank,maxN):
                     hits[f][j] += 1
                 MRRsum[f] += 1.0/(1.0+rank)
-=======
-            rank = hkt[f][r].index(test[f][i])
-            if i % 100 == 1:
-                print( i, test[f][i], rank, hkt[f][r][:10] )
-            if rank < maxN:
-                for j in range(rank):
-                    hits[f][j] += 1
-            MRRsum[f] += 1.0/(1.0+rank)
->>>>>>> 7694f516e9dee98f534eb80f5feeb13979dd7031
 
 for f in ('head','tail'):
     print( f, 'absent=', absent[f], 'present=', present[f], 'MRR=', MRRsum[f]/present[f] )
