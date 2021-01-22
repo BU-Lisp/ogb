@@ -5,8 +5,8 @@ Directly compute simple statistics from the test set.
 import pandas as pd
 import shutil, os, string
 import os.path as osp
-from ogb.utils.url import decide_download, download_url, extract_zip
-from ogb.io.read_graph_raw import read_csv_graph_raw, read_csv_heterograph_raw, read_binary_graph_raw, read_binary_heterograph_raw
+#from ogb.utils.url import decide_download, download_url, extract_zip
+#from ogb.io.read_graph_raw import read_csv_graph_raw, read_csv_heterograph_raw, read_binary_graph_raw, read_binary_heterograph_raw
 import torch
 import numpy as np
 import random
@@ -25,14 +25,7 @@ if make_data:
     valid = torch.load(data_in+'/split/time/valid.pt' )
 test  = torch.load(data_in+'/split/time/test.pt' )
 
-print( 'read in' )
-
-heads = dict()
-tails = dict()
-ht = {'head':heads, 'tail':tails}
-# at = {'head':train['head'].tolist(), 'tail':train['tail'].tolist()}
 all = set()
-
 
 # return N samples of field f for relation r
 def sample(N,f,r,v,ex=extra):
@@ -60,13 +53,25 @@ def triples(l):
         for i in range(t['head'].shape[0]):
             yield ( t['head'][i], t['relation'][i], t['tail'][i] )
 
-if make_data:
-    for h,r,t in triples([train,valid,test]):
+def make_tables( l ):
+    heads = dict()
+    tails = dict()
+    for h,r,t in triples(l):
         hd = heads.setdefault(r,{})
         hd[h] = hd.setdefault(h,0) + 1
         td = tails.setdefault(r,{})
         td[t] = td.setdefault(t,0) + 1
         all.add((h,r,t))
+    htotals = {h: sum(heads[h].values()) for h in heads.keys()}
+    ttotals = {t: sum(tails[t].values()) for t in tails.keys()}
+    return { 'head':heads, 'tail':tails, 'htotals':htotals, 'ttotals':ttotals }
+
+train_tab = make_tables( [train] )
+test_tab = make_tables( [test] )
+heads = train_tab['head']
+tails = train_tab['tail']
+htotals = train_tab['htotals']
+ttotals = train_tab['ttotals']
 
 if 0:
     with open('est','w') as out:
@@ -91,9 +96,23 @@ else:
 
 hkt = {'head':headkeys, 'tail':tailkeys}
 ht = {'head':heads, 'tail':tails}
+htot = {'head':htotals, 'tail':ttotals}
+testhtot = {'head':test_tab['htotals'], 'tail':test_tab['ttotals']}
+estHits1 = dict()
+P1 = dict()
+P1w = dict()
 
-htotals = {h: sum(heads[h].values()) for h in heads.keys()}
-ttotals = {t: sum(tails[t].values()) for t in tails.keys()}
+# estimate Hits@1 by relation, it is just the weighted mean of P_1.
+
+with open( 'est.out', 'w' ) as out:
+    print( 'subst relation Ntrain Ntest topv P1 P1w', file=out )
+    for f in ('head','tail'):
+        P1[f] = { r: float(ht[f][r][hkt[f][r][0]])/htot[f][r] for r in htot[f].keys() }
+        P1w[f] = { r: P1[f][r] * testhtot[f][r] /test[f].shape[0] for r in testhtot[f].keys() if r in P1[f].keys() }
+        estHits1[f] = sum( P1w[f].values() )
+        for r in P1w[f].keys():
+            print( f, r, htot[f][r], testhtot[f][r], hkt[f][r][0], P1[f][r], P1w[f][r], file=out )
+
 
 # estimate Hits@N and MRR for the testset
 
@@ -120,7 +139,5 @@ for i in range(test['head'].shape[0]):
 
 for f in ('head','tail'):
     print( f, 'absent=', absent[f], 'present=', present[f], 'MRR=', MRRsum[f]/present[f] )
-for f in ('head','tail'):
-    print( f, np.array2string( hits[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
-for f in ('head','tail'):
-    print( f, np.array2string( hits[f]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
+    print( f, np.array2string( hits[f][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
+    print( f, 'estHits1=', estHits1[f] )
