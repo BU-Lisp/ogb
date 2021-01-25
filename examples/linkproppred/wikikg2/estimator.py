@@ -29,6 +29,8 @@ def parse_args(args=None):
  
     return parser.parse_args(args)
 
+args = parse_args()
+
 make_data = True
 data_in = 'dataset/' + args.dataset
 newsplit = args.newsplit
