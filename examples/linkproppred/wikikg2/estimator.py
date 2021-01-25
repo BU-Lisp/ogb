@@ -11,14 +11,30 @@ import torch
 import numpy as np
 import random
 import pickle
+import argparse
+
+def parse_args(args=None):
+    parser = argparse.ArgumentParser(
+        description='Convert Knowledge Graph Formats',
+        usage='convertkg.py [<args>] [-h | --help]'
+    )
+    parser.add_argument('dataset', type=str)
+    parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs')
+    parser.add_argument('--newsplit', type=str)
+    parser.add_argument('--maxN', type=int, default=500)
+    parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
+    parser.add_argument('--write_train_totals', action='store_true')
+
+ 
+    return parser.parse_args(args)
 
 make_data = True
-data_in = 'dataset/ogbl_wikikg2'
-newsplit = 'byrel'
+data_in = 'dataset/' + args.dataset
+newsplit = args.newsplit
 
-fract = 0.5 # fraction to take which are tails of the relation
+fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
-maxN = 500
+maxN = args.maxN
 
 if make_data:
     train = torch.load(data_in+'/split/time/train.pt' )
@@ -73,10 +89,11 @@ tails = train_tab['tail']
 htotals = train_tab['htotals']
 ttotals = train_tab['ttotals']
 
-if 0:
+if args.write_train_totals:
     with open('est','w') as out:
         for r in heads.keys():
             print( r, htotals[r], ttotals[r], heads[r], tails[r], file=out )
+    exit(0)
     
 # sort the dictionaries by reverse frequency
 
@@ -102,6 +119,29 @@ estHits1 = dict()
 P1 = dict()
 P1w = dict()
 
+# for each test item, count number of negs with correct relation type
+if args.mode == 'check_negs':
+    with open( 'check.out', 'w' ) as out:
+        for f in ('head','tail'):
+            tset = { r: set(train_tab[f]) for r in train_tab[f].keys() }
+            tnegset = []
+            hist = np.zeros(maxN+1)
+            for i in range(test[f+'_neg'].shape[0]):
+                r = test['relation'][i]
+                s = set(test[f+'_neg'][i]) & tset[r]
+                tnegset.append(( r, s ))
+                print( f, i, r, s, file=out )
+                hist[len(s)] += 1
+                if i % 100 == 0:
+                    print( i, r, len(s) )
+            print( f, hist )
+    exit(0)
+
+
+if args.mode != 'test_negs':
+    raise ValueError('unknown mode', args.mode)
+
+    
 # estimate Hits@1 by relation, it is just the weighted mean of P_1.
 
 with open( 'est.out', 'w' ) as out:
