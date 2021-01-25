@@ -20,6 +20,7 @@ def parse_args(args=None):
     )
     parser.add_argument('dataset', type=str)
     parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs')
+    parser.add_argument('--split', type=str, default='time')
     parser.add_argument('--newsplit', type=str)
     parser.add_argument('--maxN', type=int, default=500)
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
@@ -37,9 +38,9 @@ extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
 
 if make_data:
-    train = torch.load(data_in+'/split/time/train.pt' )
-    valid = torch.load(data_in+'/split/time/valid.pt' )
-test  = torch.load(data_in+'/split/time/test.pt' )
+    train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
+    valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
+test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
 
