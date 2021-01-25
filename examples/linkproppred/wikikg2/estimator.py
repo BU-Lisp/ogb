@@ -128,16 +128,14 @@ if args.mode == 'check_negs':
         for f in ('head','tail'):
             tset = { r: set(train_tab[f]) for r in train_tab[f].keys() }
             tnegset = []
-            hist = np.zeros(maxN+1)
+            hist = np.zeros(maxN+1,dtype=int)
             for i in range(test[f+'_neg'].shape[0]):
                 r = test['relation'][i]
                 s = set(test[f+'_neg'][i]) & tset[r]
                 tnegset.append(( r, s ))
                 print( f, i, r, s, file=out )
                 hist[len(s)] += 1
-                if i % 100 == 0:
-                    print( i, r, len(s) )
-            print( f, hist )
+            print( f, np.trim_zeros(hist,'b') )
     exit(0)
 
 
