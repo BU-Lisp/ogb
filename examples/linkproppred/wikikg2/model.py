@@ -56,12 +56,11 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
         
-        self.relation_embedding = nn.Parameter(torch.zeros(nrelation, self.relation_dim))
+        self.relation_embedding = nn.Parameter( torch.zeros(nrelation, self.relation_dim), requires_grad = count_FR==0 )
         nn.init.uniform_(
             tensor=self.relation_embedding, 
             a=-self.embedding_range.item(), 
             b=self.embedding_range.item(),
-            requires_grad = count_FR==0
         )
         
         if model_name in ['TuckER', 'Groups']:
