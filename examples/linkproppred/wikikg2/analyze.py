@@ -51,7 +51,7 @@ if args.motif_data!='':
     for m in motifs:
         print(m)
         mid = m.tolist()
-        motif_count[mid] = motif_count.setdefault(m,0) + 1
+        motif_count[mid] = motif_count.setdefault(mid,0) + 1
     for m in motif_count.keys():
         print( m, motif_count[m] )
         exit(0)
