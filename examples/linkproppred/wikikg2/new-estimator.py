@@ -80,11 +80,13 @@ def build_edge_rel_table( l ):
         rtht = rt.setdefault((h,t),[])
         rtht.append( r )
         i += 1
-        if i % 10000 == 0:
+        if False and i % 10000 == 0:
             print( i, h, r, t, eth, rtht )
+    return (et, rt)
 
 if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
+    print( 'Build edge and relation tables...' )
     sample = random.sample( range(train['head'].shape[0]), args.maxN )
     triangles = []
     for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
