@@ -47,6 +47,15 @@ test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
 
+def some_triples(t,sample):
+    for i in sample:
+        yield ( t['head'][i], t['relation'][i], t['tail'][i] )
+    
+def triples(l):
+    for t in l:
+        for trip in some_triples( t, range(t['head'].shape[0]) ):
+            yield trip
+
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
 def list_triangles(edge_table,rel_table,edges):
@@ -64,11 +73,14 @@ def list_triangles(edge_table,rel_table,edges):
 def build_edge_rel_table( l ):
     et = dict()
     rt = dict()
+    i = 0
     for h,r,t in triples(l):
         eth = et.setdefault(h,set())
         eth.add( t )
         rtht = rt.setdefault((h,t),[])
         rtht.append( r )
+        if i % 10000 == 0:
+            print( i, eth, rtht )
 
 if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
@@ -99,15 +111,6 @@ def sample(N,f,r,v,ex=extra):
         print( 'error: too few negs', len(sl), 'for item', f, r, v, 'try again' )
         sl = sample(N,f,r,v,ex*ex*N/(len(sl)+1))
     return sl[:N]
-
-def some_triples(t,sample):
-    for i in sample:
-        yield ( t['head'][i], t['relation'][i], t['tail'][i] )
-    
-def triples(l):
-    for t in l:
-        for trip in some_triples( t, range(t['head'].shape[0]) ):
-            yield trip
 
 # the dict "heads" is a list of all head frequencies indexed by relation (resp tails)
 def make_tables( l ):
