@@ -62,6 +62,8 @@ def triples(l):
 def list_triangles(edge_table,rel_table,edges):
     for (h,r,t) in edges:
         i = 0
+        if not edge_table[h]:
+            print( 'head not in edge_table', h, r, t )
         if edge_table[t]:
             for third in list(edge_table[h] & edge_table[t]):
                 for r1 in rel_table[(h,third)]:
