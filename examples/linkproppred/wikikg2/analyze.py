@@ -47,7 +47,7 @@ if args.random_motifs>0:
     with open(args.outfile, 'w') as out:
         for i in range(args.random_motifs):
             m = random.sample( range(data.shape[0]), 3 )
-            print( m, motif(data[m,:]), file=out )
+            print( m, np.linalg.norm(motif(data[m,:]), ord=1), file=out )
     exit(0)
     
 if args.motif_data!='':
@@ -62,7 +62,7 @@ if args.motif_data!='':
     with open(args.outfile, 'w') as out:
         for m in motif_count.keys():
 #            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
-            print( m, motif_count[m], motif(data[m,:]), file=out )
+            print( m, motif_count[m], np.linalg.norm(motif(data[m,:]), ord=1), file=out )
     exit(0)
     
 if args.sample<1.0:
