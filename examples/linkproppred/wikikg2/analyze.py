@@ -52,8 +52,8 @@ if args.motif_data!='':
         print(m)
         motif_count[m] = motif_count.setdefault(m,0) + 1
     for m in motif_count.keys():
-        print( m, motif_count[m]
-    exit(0)
+        print( m, motif_count[m] )
+        exit(0)
     
 if args.sample<1.0:
     n_orig = data.shape[0]
