@@ -72,7 +72,9 @@ def list_triangles(edge_table,rel_table,edges):
                         i += 1
                 if i==0:
                     print( 'did not find in rel_table', h, r, t, third )
-        i = min( i, max_motifs_per_edge )
+        if i >= max_motifs_per_edge:
+            print( 'edge with many motifs', h, r, t )
+            i = max_motifs_per_edge
         motifs_per_edge_histogram[i] += 1        
 
 def build_edge_rel_table( l ):
@@ -92,17 +94,15 @@ def build_edge_rel_table( l ):
 if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
     print( 'Build edge and relation tables...' )
-    motifs_per_edge_histogram = np.zeros(max_motifs_per_edge)
+    motifs_per_edge_histogram = np.zeros(max_motifs_per_edge,dtype=int)
     sample = random.sample( range(train['head'].shape[0]), args.maxN )
     triangles = []
-    with open(args.dataset+'motifs.txt','w') as out:
-        i = 0
-        for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
-            triangles.append(tri[1])
-            print(tri,file=out)
-            i += 1
-            if i % 1000 == 0:
-                print( i, tri )
+    i = 0
+    for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
+        triangles.append(tri[1])
+        i += 1
+        if i % 1000 == 0:
+            print( i, tri )
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
     np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
     exit(0)
