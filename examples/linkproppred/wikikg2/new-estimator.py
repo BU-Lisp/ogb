@@ -95,7 +95,9 @@ if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
     print( 'Build edge and relation tables...' )
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge,dtype=int)
-    sample = random.sample( range(train['head'].shape[0]), args.maxN )
+    sample = range(train['head'].shape[0])
+    if args.maxN < len(sample):
+        sample = random.sample( sample, args.maxN )
     triangles = []
     i = 0
     for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
