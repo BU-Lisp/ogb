@@ -7,9 +7,8 @@ import numpy as np
 import networkx as nx
 import argparse
 from torch import load
-import os
-import re
-import csv
+import os, re, csv
+import random
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
