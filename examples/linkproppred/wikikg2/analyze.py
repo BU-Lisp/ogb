@@ -46,7 +46,7 @@ data = np.load(args.infile)
 if args.random_motifs>0:
     with open(args.outfile, 'w') as out:
         for i in range(args.random_motifs):
-            m = random.sample( range(data.shape(0), 3) )
+            m = random.sample( range(data.shape[0], 3) )
             print( m, motif(data[m,:]), file=out )
     exit(0)
     
