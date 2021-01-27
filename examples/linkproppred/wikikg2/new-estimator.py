@@ -95,12 +95,12 @@ if args.mode == 'count_motifs':
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge)
     sample = random.sample( range(train['head'].shape[0]), args.maxN )
     triangles = []
-    for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
-        triangles.append(tri[1])
-        print(tri)
-    np.trim_zeros(motifs_per_edge_histogram,'b')
-    print(motifs_per_edge_histogram)
-    np.savez(dataset+'motifs', motifs=np.array(triangles) )
+    with open(dataset+'motifs.txt','w') as out:
+        for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
+            triangles.append(tri[1])
+            print(tri,file=out)
+    print( np.trim_zeros(motifs_per_edge_histogram,'b') )
+    np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
     exit(0)
 
 # return N samples of field f for relation r
