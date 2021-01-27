@@ -1,5 +1,6 @@
 '''
-Directly compute simple statistics from the test set.
+Directly compute simple statistics from the test set, i.e. P(tail|rel) model.
+Can also estimate numbers of motifs, by the following algorithm: sample A->r B, look for B->s C and A->t C.
 '''
 
 import pandas as pd
@@ -19,10 +20,10 @@ def parse_args(args=None):
         usage='convertkg.py [<args>] [-h | --help]'
     )
     parser.add_argument('dataset', type=str)
-    parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs')
+    parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs,count_motifs')
     parser.add_argument('--split', type=str, default='time')
     parser.add_argument('--newsplit', type=str)
-    parser.add_argument('--maxN', type=int, default=500)
+    parser.add_argument('-N', '--maxN', type=int, default=500)
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
 
@@ -46,6 +47,38 @@ test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
 
+# given a list of edges, find all triangle motifs in which it is the first edge
+# edge_table is sets of tails indexed by head, rel_table is rels indexed by both
+def list_triangles(edge_table,rel_table,edges):
+    for (h,r,t) in edges:
+        for third in list(edge_table[h] & edge_table[t]):
+            i = 0
+            for r1 in rel_table[(h,third)]:
+                for r2 in rel_table[(t,third)]:
+                    yield ( r, r1, r2 )
+                    i += 1
+            if i==0:
+                print( 'did not find in rel_table', h, r, t, third )
+
+
+def build_edge_rel_table( l ):
+    et = dict()
+    rt = dict()
+    for h,r,t in triples(l):
+        eth = et.setdefault(h,set())
+        eth.add( t )
+        rtht = rt.setdefault((h,t),[])
+        rtht.append( r )
+
+if args.mode == 'count_motifs':
+    (edge_table, rel_table) = build_edge_rel_table( [train] )
+    sample = random.sample( range(train['head'].shape[0]), args.maxN )
+    triangles = []
+    for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
+        triangles.append(tri)
+        print(tri)
+    exit(0)
+
 # return N samples of field f for relation r
 def sample(N,f,r,v,ex=extra):
     Nr = int(N * fract)
@@ -67,11 +100,16 @@ def sample(N,f,r,v,ex=extra):
         sl = sample(N,f,r,v,ex*ex*N/(len(sl)+1))
     return sl[:N]
 
+def some_triples(t,sample):
+    for i in sample:
+        yield ( t['head'][i], t['relation'][i], t['tail'][i] )
+    
 def triples(l):
     for t in l:
-        for i in range(t['head'].shape[0]):
-            yield ( t['head'][i], t['relation'][i], t['tail'][i] )
+        for trip in some_triples( t, range(t['head'].shape[0]) ):
+            yield trip
 
+# the dict "heads" is a list of all head frequencies indexed by relation (resp tails)
 def make_tables( l ):
     heads = dict()
     tails = dict()
