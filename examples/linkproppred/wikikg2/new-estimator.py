@@ -62,9 +62,9 @@ def triples(l):
 def list_triangles(edge_table,rel_table,edges):
     for (h,r,t) in edges:
         i = 0
-        if not edge_table[h]:
+        if not h in edge_table:
             print( 'head not in edge_table', h, r, t )
-        if edge_table[t]:
+        if t in edge_table:
             for third in list(edge_table[h] & edge_table[t]):
                 for r1 in rel_table[(h,third)]:
                     for r2 in rel_table[(t,third)]:
@@ -100,6 +100,7 @@ if args.mode == 'count_motifs':
         print(tri)
     np.trim_zeros(motifs_per_edge_histogram,'b')
     print(motifs_per_edge_histogram)
+    np.savez(dataset+'motifs', motifs=np.array(triangles) )
     exit(0)
 
 # return N samples of field f for relation r
