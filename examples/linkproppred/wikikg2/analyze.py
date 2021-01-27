@@ -26,6 +26,7 @@ def parse_args(args=None):
     parser.add_argument('-cht', '--compare_head_tail', action='store_true')
     parser.add_argument('-s', '--sample', type=float, default=1.0 )
     parser.add_argument('--motif_data', type=str, default='' )
+    parser.add_argument('--random_motifs', type=int, default=0 )
     return parser.parse_args(args)
 
 def split_head_tail(v):
@@ -43,6 +44,13 @@ args = parse_args()
 
 data = np.load(args.infile)
 
+if args.random_motifs>0:
+    with open(args.outfile, 'w') as out:
+        for i in range(args.random_motifs):
+            m = random.sample( range(data.shape(0), 3) )
+            print( m, motif(data[m,:]), file=out )
+    exit(0)
+    
 if args.motif_data!='':
     motif_npzfile = np.load(args.motif_data)
     print( 'read motif data containing', motif_npzfile.files )
@@ -54,7 +62,8 @@ if args.motif_data!='':
     print( 'counted', sum(motif_count.values()), 'motifs' )
     with open(args.outfile, 'w') as out:
         for m in motif_count.keys():
-            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
+#            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
+            print( m, motif_count[m], motif(data[m,:]), file=out )
     exit(0)
     
 if args.sample<1.0:
