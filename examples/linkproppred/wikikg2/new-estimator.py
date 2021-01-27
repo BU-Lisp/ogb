@@ -79,6 +79,7 @@ def build_edge_rel_table( l ):
         eth.add( t )
         rtht = rt.setdefault((h,t),[])
         rtht.append( r )
+        i += 1
         if i % 10000 == 0:
             print( i, eth, rtht )
 
