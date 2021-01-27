@@ -49,12 +49,13 @@ if args.motif_data!='':
     motifs = motif_npzfile['motifs']
     motif_count = dict()
     for m in motifs:
-        print(m)
-        mid = np.asarray(m)
+        mid = (m[0], m[1], m[2])
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
-    for m in motif_count.keys():
-        print( m, motif_count[m] )
-        exit(0)
+    print( 'counted', sum(motif_count.values()), 'motifs' )
+    with open(args.outfile, 'w') as out:
+        for m in motif_count.keys():
+            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
+    exit(0)
     
 if args.sample<1.0:
     n_orig = data.shape[0]
