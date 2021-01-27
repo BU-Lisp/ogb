@@ -96,9 +96,13 @@ if args.mode == 'count_motifs':
     sample = random.sample( range(train['head'].shape[0]), args.maxN )
     triangles = []
     with open(dataset+'motifs.txt','w') as out:
+        i = 0
         for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
             triangles.append(tri[1])
             print(tri,file=out)
+            i += 1
+            if i % 1000 == 0:
+                print( i, tri )
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
     np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
     exit(0)
