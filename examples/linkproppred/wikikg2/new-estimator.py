@@ -95,7 +95,7 @@ if args.mode == 'count_motifs':
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge)
     sample = random.sample( range(train['head'].shape[0]), args.maxN )
     triangles = []
-    with open(dataset+'motifs.txt','w') as out:
+    with open(args.dataset+'motifs.txt','w') as out:
         i = 0
         for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
             triangles.append(tri[1])
