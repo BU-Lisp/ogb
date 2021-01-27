@@ -39,6 +39,7 @@ newsplit = args.newsplit
 fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
+max_motifs_per_edge = 1000
 
 if make_data:
     train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
@@ -60,15 +61,17 @@ def triples(l):
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
 def list_triangles(edge_table,rel_table,edges):
     for (h,r,t) in edges:
-        for third in list(edge_table[h] & edge_table[t]):
-            i = 0
-            for r1 in rel_table[(h,third)]:
-                for r2 in rel_table[(t,third)]:
-                    yield ( r, r1, r2 )
-                    i += 1
-            if i==0:
-                print( 'did not find in rel_table', h, r, t, third )
-
+        i = 0
+        if edge_table[t]:
+            for third in list(edge_table[h] & edge_table[t]):
+                for r1 in rel_table[(h,third)]:
+                    for r2 in rel_table[(t,third)]:
+                        yield [ ( h, t, third ), ( r, r1, r2 ) ]
+                        i += 1
+                if i==0:
+                    print( 'did not find in rel_table', h, r, t, third )
+        i = min( i, max_motifs_per_edge )
+        motifs_per_edge_histogram[i] += 1        
 
 def build_edge_rel_table( l ):
     et = dict()
@@ -87,11 +90,14 @@ def build_edge_rel_table( l ):
 if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
     print( 'Build edge and relation tables...' )
+    motifs_per_edge_histogram = np.zeros(max_motifs_per_edge)
     sample = random.sample( range(train['head'].shape[0]), args.maxN )
     triangles = []
     for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
-        triangles.append(tri)
+        triangles.append(tri[1])
         print(tri)
+    np.trim_zeros(motifs_per_edge_histogram,'b')
+    print(motifs_per_edge_histogram)
     exit(0)
 
 # return N samples of field f for relation r
