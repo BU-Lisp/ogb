@@ -50,7 +50,7 @@ if args.motif_data!='':
     motif_count = dict()
     for m in motifs:
         print(m)
-        mid = m.tolist()
+        mid = np.asarray(m)
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
     for m in motif_count.keys():
         print( m, motif_count[m] )
