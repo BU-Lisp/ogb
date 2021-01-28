@@ -63,8 +63,9 @@ def triples(l):
 def count_simple(edge_table,rel_table,edges):
     for (h,r,t) in edges:
         i = 0
-        rf = rel_table[(h,t)]
-        rb = rel_table[(t,h)]
+        for r1 in rel_table[(h,t)]:
+            
+        for r2 in rel_table[(t,h)]:
             
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
@@ -86,13 +87,13 @@ def list_triangles(edge_table,rel_table,edges):
                     for x in edge_table[h]:
                         if not x in both:
                             for r1 in rel_table[(h,x)]:
-                                cm = count_inc1[( r, r1 )]
-                                cm[h] = cm.setdefault(h,0) + 1
+                                k = ( r, r1 )
+                                count_inc1[k] = count_inc1.setdefault(k,0) + 1
                     for x in edge_table[t]:
                         if not x in both:
                             for r2 in rel_table[(t,x)]:
-                                cm = count_inc2[( r, r2 )]
-                                cm[h] = cm.setdefault(h,0) + 1
+                                k = ( r, r2 )
+                                count_inc2[k] = count_inc2.setdefault(k,0) + 1
         if i >= max_motifs_per_edge:
             print( 'edge with many motifs', h, r, t )
             i = max_motifs_per_edge
@@ -118,7 +119,7 @@ count_inc2 = dict()
 def dict_to_nparray( d ):
     a = []
     for k in d.keys():
-        print( [ d[k], k ] )
+#        print( [ d[k], k ] )
         a.append( [ d[k], k ] )
     return np.asarray( a )    
     
