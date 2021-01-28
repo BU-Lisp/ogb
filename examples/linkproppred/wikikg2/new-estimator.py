@@ -79,11 +79,11 @@ def list_triangles(edge_table,rel_table,edges):
                     for x in edge_table[h]:
                         if not x in both:
                             cm = count_inc1[( r, rel_table[(h,x)] )]
-                            cm.setdefault(h,0) += 1
+                            cm[h] = cm.setdefault(h,0) + 1
                     for x in edge_table[t]:
                         if not x in both:
                             cm = count_inc2[( r, rel_table[(t,x)] )]
-                            cm.setdefault(h,0) += 1
+                            cm[h] = cm.setdefault(h,0) + 1
         if i >= max_motifs_per_edge:
             print( 'edge with many motifs', h, r, t )
             i = max_motifs_per_edge
