@@ -26,7 +26,7 @@ def parse_args(args=None):
     parser.add_argument('-N', '--maxN', type=int, default=500)
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
-    parser.add_argument('--count_incomplete_motifs', action='store_true')
+    parser.add_argument('--count_all', action='store_true')
     parser.add_argument('--write_all_motifs', action='store_true')
 
  
@@ -46,6 +46,7 @@ max_motifs_per_edge = 1000
 if make_data:
     train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
     valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
+    nrelations = max(train['relation'])
 test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
@@ -61,12 +62,15 @@ def triples(l):
 
 # count subrelations and symmetric relations
 def count_simple(edge_table,rel_table,edges):
+    table1 = np.zeros( (nrelation,nrelation), dtype=int )
+    table2 = np.zeros( (nrelation,nrelation), dtype=int )
     for (h,r,t) in edges:
         i = 0
         for r1 in rel_table[(h,t)]:
-            i += 1
+            table1[r,r1] += 1
         for r2 in rel_table[(t,h)]:
-            i += 1
+            table2[r,r1] += 1
+    return ( table1, table2 )
             
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
@@ -84,7 +88,7 @@ def list_triangles(edge_table,rel_table,edges):
                         i += 1
                 if i==0:
                     print( 'did not find in rel_table', h, r, t, third )
-                if args.count_incomplete_motifs:
+                if args.count_all:
                     for x in edge_table[h]:
                         if not x in both:
                             for r1 in rel_table[(h,x)]:
@@ -133,7 +137,9 @@ if args.mode == 'count_motifs':
         sample = random.sample( sample, args.maxN )
     triangles = []
     motif_count = dict()
-    for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
+    some = some_triples( train, sample )
+    for tri in list_triangles( edge_table, rel_table, some ):
+        print( tri )
 #        triangles.append(tri[1])
         m = tri[1]
         mid = (m[0], m[1], m[2])
@@ -141,10 +147,20 @@ if args.mode == 'count_motifs':
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
     if args.write_all_motifs:
         np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
-    if args.count_incomplete_motifs:
+    if args.count_all:
+        ( table1, table2 ) = count_simple( edge_table, rel_table, some )
+        print( motif_count, count_inc1, count_inc2 )
+        for i in range(nrelation):
+            for j in range(nrelation):
+                if table1[i][j]>0:
+                    print( 'table1', i, j, table1[i][j] )
+                if table2[i][j]>0:
+                    print( 'table2', i, j, table1[i][j] )
         np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count),
                  inc1=dict_to_nparray(count_inc1),
-                 inc2=dict_to_nparray(count_inc2))
+                 inc2=dict_to_nparray(count_inc2),
+                 table1=table1, table2=table2),
+        )
     else:
         np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count))
     exit(0)
