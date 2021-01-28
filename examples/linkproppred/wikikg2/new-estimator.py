@@ -59,6 +59,12 @@ def triples(l):
         for trip in some_triples( t, range(t['head'].shape[0]) ):
             yield trip
 
+# count subrelations and symmetric relations
+def count_simple(edge_table,rel_table,edges):
+    for (h,r,t) in edges:
+        i = 0
+    
+            
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
 def list_triangles(edge_table,rel_table,edges):
@@ -78,11 +84,13 @@ def list_triangles(edge_table,rel_table,edges):
                 if args.count_incomplete_motifs:
                     for x in edge_table[h]:
                         if not x in both:
-                            cm = count_inc1[( r, rel_table[(h,x)] )]
+                            k = ( r, rel_table[(h,x)] )
+                            cm = count_inc1[k]
                             cm[h] = cm.setdefault(h,0) + 1
                     for x in edge_table[t]:
                         if not x in both:
-                            cm = count_inc2[( r, rel_table[(t,x)] )]
+                            k = ( r, rel_table[(t,x)] )
+                            cm = count_inc2[k]
                             cm[h] = cm.setdefault(h,0) + 1
         if i >= max_motifs_per_edge:
             print( 'edge with many motifs', h, r, t )
