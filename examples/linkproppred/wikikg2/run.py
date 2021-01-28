@@ -196,6 +196,8 @@ def main(args):
     
     logging.info('Model: %s' % args.model)
     logging.info('Dataset: %s' % args.dataset)
+    if args.split!='':
+        logging.info('Split: %s' % args.split)
     logging.info('#entity: %d' % nentity)
     logging.info('#relation: %d' % nrelation)
     
