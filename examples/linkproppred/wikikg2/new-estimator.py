@@ -159,8 +159,7 @@ if args.mode == 'count_motifs':
         np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count),
                  inc1=dict_to_nparray(count_inc1),
                  inc2=dict_to_nparray(count_inc2),
-                 table1=table1, table2=table2),
-        )
+                 table1=table1, table2=table2)
     else:
         np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count))
     exit(0)
