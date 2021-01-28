@@ -46,7 +46,7 @@ max_motifs_per_edge = 1000
 if make_data:
     train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
     valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
-    nrelations = max(train['relation'])
+    nrelation = max(train['relation'])
 test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
