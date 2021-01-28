@@ -124,7 +124,7 @@ count_inc2 = dict()
 def dict_to_nparray( d ):
     a = []
     for k in d.keys():
-        a.append( ( d[k], k ) )
+        a.append( (d[k]) + k )
     print( np.asarray( a )     )
     return np.asarray( a )    
     
