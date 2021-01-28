@@ -26,6 +26,8 @@ def parse_args(args=None):
     parser.add_argument('-N', '--maxN', type=int, default=500)
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
+    parser.add_argument('--count_incomplete_motifs', action='store_true')
+    parser.add_argument('--write_all_motifs', action='store_true')
 
  
     return parser.parse_args(args)
@@ -65,13 +67,23 @@ def list_triangles(edge_table,rel_table,edges):
         if not h in edge_table:
             print( 'head not in edge_table', h, r, t )
         if t in edge_table:
-            for third in list(edge_table[h] & edge_table[t]):
+            both = edge_table[h] & edge_table[t]
+            for third in list(both):
                 for r1 in rel_table[(h,third)]:
                     for r2 in rel_table[(t,third)]:
                         yield [ ( h, t, third ), ( r, r1, r2 ) ]
                         i += 1
                 if i==0:
                     print( 'did not find in rel_table', h, r, t, third )
+                if args.count_incomplete_motifs:
+                    for x in edge_table[h]:
+                        if not x in both:
+                            cm = count_inc1[( r, rel_table[(h,x)] )]
+                            cm.setdefault(h,0) += 1
+                    for x in edge_table[t]:
+                        if not x in both:
+                            cm = count_inc2[( r, rel_table[(t,x)] )]
+                            cm.setdefault(h,0) += 1
         if i >= max_motifs_per_edge:
             print( 'edge with many motifs', h, r, t )
             i = max_motifs_per_edge
@@ -91,22 +103,39 @@ def build_edge_rel_table( l ):
             print( i, h, r, t, eth, rtht )
     return (et, rt)
 
+count_inc1 = dict()
+count_inc2 = dict()
+
+def dict_to_nparray( d ):
+    a = []
+    for k in d.keys():
+        print( [ d[k], k ] )
+        a.append( [ d[k], k ] )
+    return np.asarray( a )    
+    
 if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
-    print( 'Build edge and relation tables...' )
+    print( 'Built edge and relation tables...' )
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge,dtype=int)
     sample = range(train['head'].shape[0])
     if args.maxN < len(sample):
         sample = random.sample( sample, args.maxN )
     triangles = []
-    i = 0
+    motif_count = dict()
     for tri in list_triangles( edge_table, rel_table, some_triples( train, sample ) ):
-        triangles.append(tri[1])
-        i += 1
-        if i % 1000 == 0:
-            print( i, tri )
+#        triangles.append(tri[1])
+        m = tri[1]
+        mid = (m[0], m[1], m[2])
+        motif_count[mid] = motif_count.setdefault(mid,0) + 1
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
-    np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
+    if args.write_all_motifs:
+        np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
+    if args.count_incomplete_motifs:
+        np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count),
+                 inc1=dict_to_nparray(count_inc1),
+                 inc2=dict_to_nparray(count_inc2))
+    else:
+        np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count))
     exit(0)
 
 # return N samples of field f for relation r
