@@ -64,8 +64,9 @@ def count_simple(edge_table,rel_table,edges):
     for (h,r,t) in edges:
         i = 0
         for r1 in rel_table[(h,t)]:
-            
+            i += 1
         for r2 in rel_table[(t,h)]:
+            i += 1
             
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
