@@ -125,7 +125,6 @@ def dict_to_nparray( d ):
     a = []
     for k in d.keys():
         a.append( (d[k],) + k )
-    print( np.asarray( a )     )
     return np.asarray( a )    
     
 if args.mode == 'count_motifs':

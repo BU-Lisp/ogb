@@ -68,8 +68,8 @@ class KGEModel(nn.Module):
                 torch.zeros(self.hidden_dim,self.hidden_dim,self.hidden_dim)) # head x tail x rel
             nn.init.uniform_(
                 tensor=self.tensor_weights,
-                a=-self.embedding_range.item()*rel_init_scale,
-                b=self.embedding_range.item()*rel_init_scale,
+                a=-self.embedding_range.item(),
+                b=self.embedding_range.item(),
             )
 
 
