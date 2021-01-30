@@ -289,7 +289,7 @@ class KGEModel(nn.Module):
             score = head * re_head
         else:
             score = tail * re_tail
-        return score
+        return torch.sum(score, dim=2)
 
     @staticmethod
     def train_step(model, optimizer, train_iterator, args):
