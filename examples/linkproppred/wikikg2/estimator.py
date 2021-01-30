@@ -249,7 +249,7 @@ for i in range(test['head'].shape[0]):
             
 for f in ('head','tail'):
     print( f, 'absent=', absent[f], 'present=', present[f] )
-    for fs in ((f,f+'_set') if args.use_testset_negatives else f):
+    for fs in ((f,f+'_set') if args.use_testset_negatives else (f,)):
         print( fs, f, MRRsum, present )
         print( fs, 'MRR=', MRRsum[fs]/present[f] )
         print( fs, np.array2string( hits[fs][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
