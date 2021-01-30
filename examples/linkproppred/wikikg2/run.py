@@ -205,7 +205,7 @@ def main(args):
         split_dict = dataset.get_edge_split(split_type=args.split)
     else:
         split_dict = dataset.get_edge_split()
-    nentity = dataset.graph['num_nodes']
+    nentity = int(dataset.graph['num_nodes'])
     nrelation = int(max(dataset.graph['edge_reltype'])[0])+1
 
     evaluator = Evaluator(name = args.dataset, meta_info=meta_dict)
