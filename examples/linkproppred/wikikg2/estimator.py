@@ -25,6 +25,7 @@ def parse_args(args=None):
     parser.add_argument('--maxN', type=int, default=500)
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
+    parser.add_argument('-u', '--use_testset_negatives', action='store_true')
 
  
     return parser.parse_args(args)
@@ -89,6 +90,7 @@ heads = train_tab['head']
 tails = train_tab['tail']
 htotals = train_tab['htotals']
 ttotals = train_tab['ttotals']
+nentities = max(max([heads[h].values() for h in heads.keys()]))
 
 if args.write_train_totals:
     with open('est','w') as out:
@@ -156,6 +158,7 @@ with open( 'est.out', 'w' ) as out:
 
 
 # estimate Hits@N and MRR for the testset
+# we can compute the true rank, or rank within a specified test set
 
 hits = {'head':np.zeros(maxN+1),'tail':np.zeros(maxN+1)}
 MRRsum = {'head':0, 'tail':0}
@@ -177,8 +180,25 @@ for i in range(test['head'].shape[0]):
                 for j in range(rank,maxN):
                     hits[f][j] += 1
                 MRRsum[f] += 1.0/(1.0+rank)
-
+            if args.use_testset_negatives:
+                ranks = [ rank ]
+                for neg in test[f+'_neg'][i]:
+                    ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentities/2 )
+                newrank = ranks.argsort().index(0)
+                print( 'old rank', rank, 'new rank', newrank )
+                for j in range(newrank,maxN):
+                    hits[f+'_set'][j] += 1
+                MRRsum[f+'_set'] += 1.0/(1.0+newrank)
+            
 for f in ('head','tail'):
-    print( f, 'absent=', absent[f], 'present=', present[f], 'MRR=', MRRsum[f]/present[f] )
-    print( f, np.array2string( hits[f][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
+    print( f, 'absent=', absent[f], 'present=', present[f] )
+    for fs in (f,f+'_set') if args.use_testset_negatives else f:
+        print( fs, 'MRR=', MRRsum[fs]/present[f] )
+        print( fs, np.array2string( hits[fs][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
     print( f, 'estHits1=', estHits1[f] )
+
+if args.use_testset_negatives:
+    s = '_set'
+    for N in (1,3,10):
+        print( 'Test Hits@%d = %f', N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail'])
+    print( 'Test MRR = %f', N, (MRRsum['head'+s]+MRRsum['tail'+s][(N-1)])/(present['head']+present['tail'])           

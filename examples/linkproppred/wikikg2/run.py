@@ -78,6 +78,7 @@ def parse_args(args=None):
     parser.add_argument('--ntriples_eval_train', type=int, default=200000, help='number of training triples to evaluate eventually')
     parser.add_argument('--neg_size_eval_train', type=int, default=500, help='number of negative samples when evaluating training triples')
     return parser.parse_args(args)
+    parser.add_argument('--test_random_sample', action='store_true' )
 
 def override_config(args):
     '''
@@ -102,9 +103,6 @@ def save_model(model, optimizer, save_variable_list, args):
     
     argparse_dict = vars(args)
     with open(os.path.join(args.save_path, 'config.json'), 'w') as fjson:
-        for x in argparse_dict.keys():
-            print( x, argparse_dict[x] )
-            json.dump({x:argparse_dict[x]}, fjson)
         json.dump(argparse_dict, fjson)
 
     torch.save({
@@ -357,7 +355,7 @@ def main(args):
                 
             if args.do_valid and step % args.valid_steps == 0 and step > 0:
                 logging.info('Evaluating on Valid Dataset...')
-                metrics = kge_model.test_step(kge_model, valid_triples, args)
+                metrics = kge_model.test_step(kge_model, valid_triples, args,, random_sampling=args.test_random_sample)
                 log_metrics('Valid', step, metrics, writer)
         
         save_variable_list = {
@@ -369,12 +367,12 @@ def main(args):
         
     if args.do_valid:
         logging.info('Evaluating on Valid Dataset...')
-        metrics = kge_model.test_step(kge_model, valid_triples, args)
+        metrics = kge_model.test_step(kge_model, valid_triples, args, random_sampling=args.test_random_sample)
         log_metrics('Valid', step, metrics, writer)
     
     if args.do_test:
         logging.info('Evaluating on Test Dataset...')
-        metrics = kge_model.test_step(kge_model, test_triples, args)
+        metrics = kge_model.test_step(kge_model, test_triples, args, random_sampling=args.test_random_sample)
         log_metrics('Test', step, metrics, writer)
     
     if args.evaluate_train:
