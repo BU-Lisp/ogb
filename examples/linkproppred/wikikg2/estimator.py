@@ -129,7 +129,7 @@ if args.Fmodel:
     rel_offset = {'head':0, 'tail':nrelation}
 
 def eval_Fscores( f, r ):
-    if not rel in fkt[f]:
+    if not r in fkt[f]:
         score = np.dot( u, v[r+rel_offset[f],:] )
         ord = np.argsort(score)
         fkt[f][r] = ord[range(maxN)]
