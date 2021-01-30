@@ -48,7 +48,9 @@ maxN = args.maxN
 
 if os.path.isfile(data_in+'/split/'+args.split+'/split_dict.pt'):
     d = torch.load(data_in+'/split/'+args.split+'/split_dict.pt')
-    (train, valid, test) = d[('train','valid','test')]
+    train = d['train']
+    valid = d['valid']
+    test  = d['test']
 else:
     train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
     valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
