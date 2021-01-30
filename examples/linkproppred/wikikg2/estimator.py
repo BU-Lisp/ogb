@@ -34,29 +34,30 @@ args = parse_args()
 make_data = True
 newsplit = args.newsplit
 
-meta = 'dataset_' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
-if not os.path.exists(meta):
-    meta = 'dataset/' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
-if os.path.exists(meta):
-    meta_dict = torch.load(meta)
-    data_in = meta_dict['dir_path']
-else:    
-    data_in = 'dataset_' + args.dataset
+if os.path.exists(args.dataset+'/split/'+args.split):
+    data_in = args.dataset+'/split/'+args.split
+else:
+    meta = 'dataset_' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
+    if os.path.exists(meta):
+        meta_dict = torch.load(meta)
+        data_in = meta_dict['dir_path'] +'/split/'+args.split
+    else:    
+        data_in = 'dataset_' + args.dataset +'/split/'+args.split
 print( 'read from', data_in )
 
 fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
 
-if os.path.isfile(data_in+'/split/'+args.split+'/split_dict.pt'):
-    d = torch.load(data_in+'/split/'+args.split+'/split_dict.pt')
+if os.path.isfile(data_in+'/split_dict.pt'):
+    d = torch.load(data_in+'/split_dict.pt')
     train = d['train']
     valid = d['valid']
     test  = d['test']
 else:
-    train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
-    valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
-    test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
+    train = torch.load(data_in+'/train.pt' )
+    valid = torch.load(data_in+'/valid.pt' )
+    test  = torch.load(data_in+'/test.pt' )
 
 all = set()
 
