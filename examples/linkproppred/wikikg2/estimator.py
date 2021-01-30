@@ -217,7 +217,7 @@ present = {'head':0, 'tail':0}
 variants = []
 
 def init_stats(v):
-    variants += ['_f']
+    variants.append(v)
     for f in ('head','tail'):
         hits[f+v] = np.zeros(maxN+1)
         MRRsum[f+v] = 0
