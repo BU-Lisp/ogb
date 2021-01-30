@@ -133,6 +133,7 @@ def eval_Fscores( f, r ):
         score = np.dot( u, v[r+rel_offset[f],:] )
         ord = np.argsort(score)
         fkt[f][r] = ord[range(maxN)]
+        print( f, r, fkt[f][r] )
     return fkt[f][r]
 
 train_tab = make_tables( [train] )
