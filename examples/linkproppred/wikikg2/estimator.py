@@ -256,7 +256,7 @@ for i in range(test['head'].shape[0]):
                     ranks = [ rank ]
                     present[f+'_set'] += 1 
                     for neg in test[f+'_neg'][i]:
-                        ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentities/2 )
+                        ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentity/2 )
                         newrank = ranks.argsort().index(0)
                         print( 'old rank', rank, 'new rank', newrank )
                     for j in range(newrank,maxN):
