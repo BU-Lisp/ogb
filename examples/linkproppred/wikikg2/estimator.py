@@ -39,10 +39,13 @@ fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
 
-if make_data:
+if os.path.isfile(os.path.join(path, 'split_dict.pt')):
+    d = torch.load(os.path.join(path, 'split_dict.pt'))
+    (train, valid, test) = d[('train','valid','test')]
+else:
     train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
     valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
-test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
+     test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
 
