@@ -115,7 +115,7 @@ if args.mode == 'Fmodel':
         counts[t,r+nrelation] += 1
     counts = counts / (np.linalg.norm( counts, ord=1, axis=1, keepdims=True )+1)
     print( counts.shape )
-    u, s, vt = svds(counts,k=min(maxN,counts.shape))
+    u, s, vt = svds(counts,k=min(maxN,counts.shape[0],counts.shape[1]))
     print( 'singular values:', s )
     u = u[:,range(len(s))]
     vt = vt[range(len(s)),:]
