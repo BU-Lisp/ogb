@@ -45,7 +45,7 @@ if os.path.isfile(os.path.join(path, 'split_dict.pt')):
 else:
     train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
     valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
-     test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
+    test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
 
