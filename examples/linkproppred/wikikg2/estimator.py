@@ -27,8 +27,9 @@ def parse_args(args=None):
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('-u', '--use_testset_negatives', action='store_true')
 
- 
     return parser.parse_args(args)
+
+args = parse_args()
 
 make_data = True
 data_in = 'dataset/' + args.dataset
