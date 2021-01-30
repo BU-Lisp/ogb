@@ -32,8 +32,15 @@ def parse_args(args=None):
 args = parse_args()
 
 make_data = True
-data_in = 'dataset/' + args.dataset
 newsplit = args.newsplit
+
+meta = 'dataset_' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
+if os.path.exists(meta):
+    args.meta_dict = meta
+    data_in = meta_dict['dir_path']
+else:    
+    data_in = 'dataset_' + args.dataset
+print( 'read from', data_in )
 
 fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
