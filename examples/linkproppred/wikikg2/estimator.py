@@ -105,7 +105,7 @@ def make_tables( l ):
 # estimate the "F" model
 
 if args.mode == 'Fmodel':
-    counts = np.zeros( (nentity,2*nrelation+1), dtype=float )
+    counts = np.zeros( (nentity+1,2*nrelation+1), dtype=float )
     for h,r,t in triples([train]):
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
