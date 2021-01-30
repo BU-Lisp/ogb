@@ -60,7 +60,7 @@ all = set()
 
 nentity = max(np.max(train['head']),np.max(train['tail']))
 nrelation = np.max(train['relation'])
-print( 'nentity=%d nrelation=%d' % nentity % nrelation )
+print( 'nentity=%d nrelation=%d' % (nentity, nrelation) )
 
 # return N samples of field f for relation r
 def sample(N,f,r,v,ex=extra):
