@@ -110,7 +110,7 @@ if args.mode == 'Fmodel':
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
     counts = counts / (np.linarg.norm( counts, ord=1, axis=1, keepDims=True )+1)
-    u, s, vt = np.svd(counts)
+    u, s, vt = np.linalg.svd(counts)
     print( 'singular values:', s )
     if len(s) > maxN:
         s = s[range(maxN)]
