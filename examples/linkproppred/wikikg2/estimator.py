@@ -109,7 +109,7 @@ if args.mode == 'Fmodel':
     for h,r,t in triples([train]):
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
-    counts = counts / (np.linarg.norm( counts, ord=1, axis=1, keepDims=True )+1)
+    counts = counts / (np.linalg.norm( counts, ord=1, axis=1, keepDims=True )+1)
     u, s, vt = np.linalg.svd(counts)
     print( 'singular values:', s )
     if len(s) > maxN:
