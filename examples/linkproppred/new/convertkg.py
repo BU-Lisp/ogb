@@ -92,7 +92,7 @@ elif args.mode=='random_tails':
     num_edges = num_vertices - num_tails
     g = { 'edges': [[i,] for i in range(num_edges)] }
     graph['num_nodes'] = num_vertices
-    graph['edge_index'] = [ range(num_tails,num_vertices), np.random.randint(num_tails, size=(num_edges)) ]
+    graph['edge_index'] = np.array( [ range(num_tails,num_vertices), np.random.randint(num_tails, size=(num_edges)) ] )
     graph['edge_reltype'] = np.random.randint(num_relations, size=(num_edges,1))
 elif args.mode=='read_triples':
     edges = []
