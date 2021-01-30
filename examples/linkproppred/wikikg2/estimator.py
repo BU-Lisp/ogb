@@ -243,30 +243,32 @@ for i in range(test['head'].shape[0]):
         if n==0:
             absent[f] += 1
         else:
-            present[f] += 1 
             if test[f][i] in hkt[f][r]:
                 rank = hkt[f][r].index(test[f][i])
+                present[f] += 1 
                 if i % 100 == 1:
                     print( i, test[f][i], rank, hkt[f][r][:10] )
                 for j in range(rank,maxN):
                     hits[f][j] += 1
                 MRRsum[f] += 1.0/(1.0+rank)
+                if args.use_testset_negatives:
+                    ranks = [ rank ]
+                    present[f+'_set'] += 1 
+                    for neg in test[f+'_neg'][i]:
+                        ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentities/2 )
+                        newrank = ranks.argsort().index(0)
+                        print( 'old rank', rank, 'new rank', newrank )
+                    for j in range(newrank,maxN):
+                        hits[f+'_set'][j] += 1
+                    MRRsum[f+'_set'] += 1.0/(1.0+newrank)
             if args.Fmodel:
                 eval_Fscores( f, r )
                 if test[f][i] in fkt[f][r]:
                     frank = fkt[f][r].index(test[f][i])
+                    present[f+'_f'] += 1 
                     for j in range(frank,maxN):
                         hits[f+'_f'][j] += 1
                     MRRsum[f+'_f'] += 1.0/(1.0+frank)
-            if args.use_testset_negatives:
-                ranks = [ rank ]
-                for neg in test[f+'_neg'][i]:
-                    ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentities/2 )
-                newrank = ranks.argsort().index(0)
-                print( 'old rank', rank, 'new rank', newrank )
-                for j in range(newrank,maxN):
-                    hits[f+'_set'][j] += 1
-                MRRsum[f+'_set'] += 1.0/(1.0+newrank)
 
                 
 for f in ('head','tail'):
@@ -274,10 +276,10 @@ for f in ('head','tail'):
     print( f, 'estHits1=', estHits1[f] )
     for s in variants:
         fs = f + s
-        print( fs, 'MRR=', MRRsum[fs]/present[f] )
-        print( fs, np.array2string( hits[fs][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
+        print( fs, 'MRR=', MRRsum[fs]/present[fs] )
+        print( fs, np.array2string( hits[fs][:10]/present[fs], precision=8, threshold=np.inf, max_line_width=np.inf ) )
 
 for s in variants:
     for N in (1,3,10):
-        print( 'Test%s Hits@%d = %f' % (s, N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail'])) )
-    print( 'Test%s MRR = %f' % (s, (MRRsum['head'+s]+MRRsum['tail'+s])/(present['head']+present['tail'])) )
+        print( 'Test%s Hits@%d = %f' % (s, N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head'+s]+present['tail'+s])) )
+    print( 'Test%s MRR = %f' % (s, (MRRsum['head'+s]+MRRsum['tail'+s])/(present['head'+s]+present['tail'+s])) )
