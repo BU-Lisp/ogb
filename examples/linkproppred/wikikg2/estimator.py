@@ -257,7 +257,7 @@ for i in range(test['head'].shape[0]):
                     present[f+'_set'] += 1 
                     for neg in test[f+'_neg'][i]:
                         ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentity/2 )
-                        newrank = np.array(ranks).argsort().index(0)
+                        newrank = np.array(ranks).argsort().tolist().index(0)
                         print( 'old rank', rank, 'new rank', newrank )
                     for j in range(newrank,maxN):
                         hits[f+'_set'][j] += 1
