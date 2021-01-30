@@ -215,6 +215,18 @@ MRRsum = {'head':0, 'tail':0}
 absent = {'head':0, 'tail':0}
 present = {'head':0, 'tail':0}
 
+def init_stats(v):
+    variants += ['_f']
+    for f in ('head','tail'):
+        hits[f+v] = np.zeros(maxN+1)
+        MRRsum[f+v] = 0
+
+variants = []
+if args.Fmodel:
+    init_stats('_f')
+if args.use_testset_negatives:
+    init_stats('_set')
+
 for i in range(test['head'].shape[0]):
     r = test['relation'][i]
     for f in ('head','tail'):
@@ -247,11 +259,6 @@ for i in range(test['head'].shape[0]):
                     hits[f+'_set'][j] += 1
                 MRRsum[f+'_set'] += 1.0/(1.0+newrank)
 
-variants = []
-if args.Fmodel:
-    variants += ['_f']
-if args.use_testset_negatives:
-    variants += ['_set']
                 
 for f in ('head','tail'):
     print( f, 'absent=', absent[f], 'present=', present[f] )
