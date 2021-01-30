@@ -120,6 +120,20 @@ if args.mode == 'est_Fmodel':
     np.save( 'relation_embedding', np.matmul( vt.transpose(), np.diag(s) ) )
     exit( 0 )
 
+    # sort by reverse F model scores
+if args.mode == 'Fmodel':
+    u = np.load( 'entity_embedding' )
+    v = np.load( 'relation_embedding' )
+
+def eval_Fscores( rel2 ):
+    system( 'date' )
+    for rel in range(20):
+        score = np.dot( u, v[rel,:] )
+    system( 'date' )
+
+eval_Fscores(0)
+exit(0)        
+
 train_tab = make_tables( [train] )
 test_tab = make_tables( [test] )
 heads = train_tab['head']
@@ -149,19 +163,6 @@ else:
     with open( 'est.data' ) as f:
         ( heads, tails, headkeys, tailkeys ) = pickle.load( f )
 
-# sort by reverse F model scores
-if args.mode == 'Fmodel':
-    u = np.load( 'entity_embedding' )
-    v = np.load( 'relation_embedding' )
-
-def eval_Fscores( rel2 ):
-    system( 'date' )
-    for rel in range(20):
-        score = np.dot( u, v[rel,:] )
-    system( 'date' )
-
-eval_Fscores(0)
-        
 hkt = {'head':headkeys, 'tail':tailkeys}
 ht = {'head':heads, 'tail':tails}
 htot = {'head':htotals, 'tail':ttotals}
