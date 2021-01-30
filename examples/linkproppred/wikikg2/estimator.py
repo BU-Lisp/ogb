@@ -231,7 +231,7 @@ for i in range(test['head'].shape[0]):
                         frank = fkt[f][r].index(test[f][i])
                     else:
                         frank = -1
-                    print( r, test[f][i], rank, frank )
+#                    print( r, test[f][i], rank, frank )
                 if i % 100 == 1:
                     print( i, test[f][i], rank, hkt[f][r][:10] )
                 for j in range(rank,maxN):
