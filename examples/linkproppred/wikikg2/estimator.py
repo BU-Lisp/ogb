@@ -214,7 +214,7 @@ hits = {'head':np.zeros(maxN+1),'tail':np.zeros(maxN+1)}
 MRRsum = {'head':0, 'tail':0}
 absent = {'head':0, 'tail':0}
 present = {'head':0, 'tail':0}
-variants = []
+variants = ['']
 
 def init_stats(v):
     variants.append(v)
