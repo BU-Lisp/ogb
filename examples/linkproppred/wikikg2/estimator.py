@@ -127,8 +127,9 @@ if args.mode == 'Fmodel':
 
 def eval_Fscores( rel2 ):
     os.system( 'date' )
-    for rel in range(20):
+    for rel in range(50):
         score = np.dot( u, v[rel,:] )
+        ord = np.argsort(score)
     os.system( 'date' )
 
 eval_Fscores(0)
