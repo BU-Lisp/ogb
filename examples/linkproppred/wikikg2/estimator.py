@@ -255,8 +255,7 @@ for f in ('head','tail'):
         print( fs, np.array2string( hits[fs][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
     print( f, 'estHits1=', estHits1[f] )
 
-if args.use_testset_negatives:
-    s = '_set'
+for s in (('','_set') if args.use_testset_negatives else ('',)):
     for N in (1,3,10):
         print( 'Test Hits@%d = %f', N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail']) )
     print( 'Test MRR = %f', N, (MRRsum['head'+s]+MRRsum['tail'+s][(N-1)])/(present['head']+present['tail']) )
