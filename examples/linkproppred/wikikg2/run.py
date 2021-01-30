@@ -166,7 +166,6 @@ def append_rng( args, nentity, set_relation, train_triples ):
     logging.info('seed: %d' % args.seed)
     g = nx.fast_gnp_random_graph(nentity, edge_probability, seed=args.seed, directed=True)
     edges = np.array(g.edges)
-    print( train_triples['head'].shape, edges[:,0].shape )
     return { 'head': np.concatenate([train_triples['head'],edges[:,0]]),
              'tail': np.concatenate([train_triples['tail'],edges[:,1]]),
              'relation': np.concatenate([train_triples['relation'],np.full(edges.shape[0],set_relation)]) }

@@ -74,7 +74,7 @@ class KGEModel(nn.Module):
 
 
         #Do not forget to modify this line when you add a new model in the "forward" function
-        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups']:
+        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F']:
             raise ValueError('model %s not supported' % model_name)
             
         if model_name in ['RotatE','Groups'] and (not double_entity_embedding or double_relation_embedding):
@@ -83,11 +83,11 @@ class KGEModel(nn.Module):
         if model_name == 'ComplEx' and (not double_entity_embedding or not double_relation_embedding):
             raise ValueError('ComplEx should use --double_entity_embedding and --double_relation_embedding')
 
-        if model_name in ['PairRE'] and not double_relation_embedding:
-            raise ValueError('PairRE should use --double_relation_embedding')
+        if model_name in ['PairRE','F'] and not double_relation_embedding:
+            raise ValueError('PairRE and F should use --double_relation_embedding')
 
         self.evaluator = evaluator
-        
+
     def forward(self, sample, mode='single'):
         '''
         Forward function that calculate the score of a batch of triples.
@@ -176,6 +176,7 @@ class KGEModel(nn.Module):
             'PairRE': self.PairRE,
             'TuckER': self.TuckER,
             'Groups': self.Groups,
+            'F': self.F,
         }
         
         if self.model_name in model_func:
@@ -273,7 +274,6 @@ class KGEModel(nn.Module):
             score = torch.einsum( 'htr,bnh,bit,bir->bn', self.tensor_weights, head_h, tail_t, relation )
         else:
             score = torch.einsum( 'htr,bih,bnt,bir->bn', self.tensor_weights, head_h, tail_t, relation )
-
         return self.gamma.item() - score
 
     def TuckER(self, head, relation, tail, mode):
@@ -281,8 +281,15 @@ class KGEModel(nn.Module):
             score = torch.einsum( 'htr,bnh,bit,bir->bn', self.tensor_weights, head, tail, relation )
         else:
             score = torch.einsum( 'htr,bih,bnt,bir->bn', self.tensor_weights, head, tail, relation )
-
         return self.gamma.item() - score
+
+    def F(self, head, relation, tail, mode):
+        re_head, re_tail = torch.chunk(relation, 2, dim=2)
+        if mode == 'head-batch':
+            score = head * re_head
+        else:
+            score = tail * re_tail
+        return score
 
     @staticmethod
     def train_step(model, optimizer, train_iterator, args):
