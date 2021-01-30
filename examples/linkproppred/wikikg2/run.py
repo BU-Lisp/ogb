@@ -355,7 +355,7 @@ def main(args):
                 
             if args.do_valid and step % args.valid_steps == 0 and step > 0:
                 logging.info('Evaluating on Valid Dataset...')
-                metrics = kge_model.test_step(kge_model, valid_triples, args,, random_sampling=args.test_random_sample)
+                metrics = kge_model.test_step(kge_model, valid_triples, args, random_sampling=args.test_random_sample)
                 log_metrics('Valid', step, metrics, writer)
         
         save_variable_list = {
