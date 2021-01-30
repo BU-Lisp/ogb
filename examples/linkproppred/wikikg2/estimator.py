@@ -225,18 +225,18 @@ for i in range(test['head'].shape[0]):
             present[f] += 1 
             if test[f][i] in hkt[f][r]:
                 rank = hkt[f][r].index(test[f][i])
-                if args.Fmodel:
-                    eval_Fscores( f, r )
-                    if test[f][i] in fkt[f][r]:
-                        frank = fkt[f][r].index(test[f][i])
-                    else:
-                        frank = -1
-#                    print( r, test[f][i], rank, frank )
                 if i % 100 == 1:
                     print( i, test[f][i], rank, hkt[f][r][:10] )
                 for j in range(rank,maxN):
                     hits[f][j] += 1
                 MRRsum[f] += 1.0/(1.0+rank)
+            if args.Fmodel:
+                eval_Fscores( f, r )
+                if test[f][i] in fkt[f][r]:
+                    frank = fkt[f][r].index(test[f][i])
+                    for j in range(frank,maxN):
+                        hits[f+'_f'][j] += 1
+                    MRRsum[f+'_f'] += 1.0/(1.0+frank)
             if args.use_testset_negatives:
                 ranks = [ rank ]
                 for neg in test[f+'_neg'][i]:
@@ -246,15 +246,22 @@ for i in range(test['head'].shape[0]):
                 for j in range(newrank,maxN):
                     hits[f+'_set'][j] += 1
                 MRRsum[f+'_set'] += 1.0/(1.0+newrank)
-            
+
+variants = []
+if args.Fmodel:
+    variants += ['_f']
+if args.use_testset_negatives:
+    variants += ['_set']
+                
 for f in ('head','tail'):
     print( f, 'absent=', absent[f], 'present=', present[f] )
-    for fs in ((f,f+'_set') if args.use_testset_negatives else (f,)):
+    print( f, 'estHits1=', estHits1[f] )
+    for s in variants:
+        fs = f + s
         print( fs, 'MRR=', MRRsum[fs]/present[f] )
         print( fs, np.array2string( hits[fs][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
-    print( f, 'estHits1=', estHits1[f] )
 
-for s in (('','_set') if args.use_testset_negatives else ('',)):
+for s in variants:
     for N in (1,3,10):
         print( 'Test Hits@%d = %f' % (N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail'])) )
     print( 'Test MRR = %f' % ((MRRsum['head'+s]+MRRsum['tail'+s])/(present['head']+present['tail'])) )
