@@ -45,6 +45,10 @@ test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
 
 all = set()
 
+nentity = max(train['head'],train['tail'])
+nrelation = max(train['relation'])
+print( 'nentity=%d nrelation=%d', nentity, nrelation )
+
 # return N samples of field f for relation r
 def sample(N,f,r,v,ex=extra):
     Nr = int(N * fract)
@@ -84,13 +88,31 @@ def make_tables( l ):
     ttotals = {t: sum(tails[t].values()) for t in tails.keys()}
     return { 'head':heads, 'tail':tails, 'htotals':htotals, 'ttotals':ttotals }
 
+
+# estimate the "F" model
+
+if args.mode == 'Fmodel':
+    counts = np.zeros( (nentity,2*nrelation), dtype=float )
+    for h,r,t in triples([train]):
+        counts[h,r] += 1
+        counts[t,r+nrelation] += 1
+    counts = counts / (np.linarg.norm( counts, ord=1, axis=1, keepDims=True )+1)
+    u, s, vt = np.svd(counts)
+    print( 'singular values:', s )
+    if len(s) > maxN:
+        s = s[range(maxN)]
+    u = u[:,range(len(s))]
+    vt = vt[range(len(s)),:]
+    np.save( 'entity_embedding', u )
+    np.save( 'relation_embedding', vt * np.diag(s) )
+    exit( 0 )
+
 train_tab = make_tables( [train] )
 test_tab = make_tables( [test] )
 heads = train_tab['head']
 tails = train_tab['tail']
 htotals = train_tab['htotals']
 ttotals = train_tab['ttotals']
-nentities = max(max([heads[h].values() for h in heads.keys()]))
 
 if args.write_train_totals:
     with open('est','w') as out:
@@ -139,7 +161,6 @@ if args.mode == 'check_negs':
                     print( i, r, len(s) )
             print( f, hist )
     exit(0)
-
 
 if args.mode != 'test_negs':
     raise ValueError('unknown mode', args.mode)
