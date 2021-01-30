@@ -116,7 +116,7 @@ if args.mode == 'est_Fmodel':
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
     counts = counts / (np.linalg.norm( counts, ord=1, axis=0, keepdims=True )+1)
-    if Fmodel_separate:
+    if args.Fmodel_separate:
         counts_sep = np.swapaxes( counts.reshape( nentity+1, 2, nrelation+1 ), 1, 2 )
         u_s_vt = [svds(counts_sep[:,:,i],k=min(maxN,counts.shape[0],counts_sep.shape[1])-1) for i in (0,1)]
         u = numpy.concatenate( u_s_vt[0][0], u_s_vt[1][0], axis=1 )
