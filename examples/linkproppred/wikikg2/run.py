@@ -42,6 +42,8 @@ def parse_args(args=None):
     
     parser.add_argument('--dataset', type=str, default='ogbl-wikikg2', help='dataset name, default to wikikg2')
     parser.add_argument('--split', default='', type=str)
+    parser.add_argument('--add_random_fraction', default=0.0, type=float, help='add N*arg random edges to train, all of a new edge type')
+    parser.add_argument('--seed', default=1234, type=int)
     parser.add_argument('--model', default='TransE', type=str)
     parser.add_argument('-de', '--double_entity_embedding', action='store_true')
     parser.add_argument('-dr', '--double_relation_embedding', action='store_true')
@@ -154,10 +156,23 @@ def log_metrics(mode, step, metrics, writer):
         logging.info('%s %s at step %d: %f' % (mode, metric, step, metrics[metric]))
         writer.add_scalar("_".join([mode, metric]), metrics[metric], step)
         
+
+def append_rng( args, nentity, set_relation, train_triples ):
+    import networkx as nx
+    nrandom_edges = args.add_random_fraction * len(train_triples['head'])
+    edge_probability = nrandom_edges/(nentity*(nentity-1)/2)
+    logging.info('add_random_fraction: %f' % args.add_random_fraction)
+    logging.info('edge_probability: %f' % edge_probability)
+    logging.info('seed: %d' % arg.seed)
+    g = nx.fast_gnp_random_graph(nentity, edge_probability, seed=arg.seed, directed=True)
+    edges = np.array(g.edges)
+    return { 'head': train_triples['head']+edges[:,0],
+             'tail': train_triples['tail']+edges[:,1],
+             'relation': train_triples['relation']+np.full(edges.shape[0],set_relation) }
         
 def main(args):
     if (not args.do_train) and (not args.do_valid) and (not args.do_test) and (not args.evaluate_train):
-        raise ValueError('one of train/val/test mode must be choosed.')
+        raise ValueError('one of train/val/test mode must be chosen')
     
     if args.init_checkpoint:
         override_config(args)
@@ -193,6 +208,8 @@ def main(args):
 
     args.nentity = nentity
     args.nrelation = nrelation
+    if args.add_random_fraction>0:
+        nrelation += 1
     
     logging.info('Model: %s' % args.model)
     logging.info('Dataset: %s' % args.dataset)
@@ -202,6 +219,8 @@ def main(args):
     logging.info('#relation: %d' % nrelation)
     
     train_triples = split_dict['train']
+    if args.add_random_fraction>0:
+        train_triples = append_rng( args, nentity, nrelation-1, train_triples )
     logging.info('#train: %d' % len(train_triples['head']))
     valid_triples = split_dict['valid']
     logging.info('#valid: %d' % len(valid_triples['head']))

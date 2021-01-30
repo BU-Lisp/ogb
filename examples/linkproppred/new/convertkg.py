@@ -80,6 +80,7 @@ if node_map!=None and relation_map==None:
     
 if args.mode=='random_gnp':
 # generate a random graph in the object 'graph'
+# should this be directed ???
     g = nx.fast_gnp_random_graph(num_vertices, args.edge_probability)
     graph['edge_index'] = np.array(g.edges).transpose() 
     graph['num_nodes'] = len(g.nodes)
