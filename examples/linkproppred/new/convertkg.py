@@ -22,13 +22,14 @@ def parse_args(args=None):
     parser.add_argument('--select_tail', type=int, default=-1)
     parser.add_argument('--test_upto', type=int, default=0)
     parser.add_argument('-f', '--file', type=str)
-    parser.add_argument('-m', '--mode', type=str, help='read_triples,read_two_files,random_gnp')
+    parser.add_argument('-m', '--mode', type=str, help='read_triples,read_two_files,random_gnp,random_tails')
     parser.add_argument('-s', '--subsample', type=float, default=0.8)
     parser.add_argument('--shuffle_edge_types', type=float, default=0.0)
     parser.add_argument('--collapse_edge_types', type=int, default=0, help='reduce edge types to n mod N')
     parser.add_argument('-ep', '--edge_probability', type=float, default=0.1)
     parser.add_argument('-nv', '--n_vertices', type=int)
     parser.add_argument('-nr', '--n_relations', type=int)
+    parser.add_argument('-p', '--param', type=int)
     parser.add_argument('--map_node_file', type=str)
     parser.add_argument('--map_relation_file', type=str)
     return parser.parse_args(args)
@@ -85,7 +86,14 @@ if args.mode=='random_gnp':
     graph['edge_index'] = np.array(g.edges).transpose() 
     graph['num_nodes'] = len(g.nodes)
     num_edges = graph['edge_index'].shape[1]
-    graph['edge_reltype'] = np.random.randint(num_relations, size=(num_edges,1)) 
+    graph['edge_reltype'] = np.random.randint(num_relations, size=(num_edges,1))
+elif args.mode=='random_tails':
+    num_tails = args.param
+    num_edges = num_vertices - num_tails
+    g = { 'edges': [[i,] for i in range(num_edges)] }
+    graph['num_nodes'] = num_vertices
+    graph['edge_index'] = [ range(num_tails,num_vertices), np.random.randint(num_tails, size=(num_edges)) ]
+    graph['edge_reltype'] = np.random.randint(num_relations, size=(num_edges,1))
 elif args.mode=='read_triples':
     edges = []
     relations = []
