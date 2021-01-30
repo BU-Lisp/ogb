@@ -116,8 +116,6 @@ if args.mode == 'Fmodel':
     counts = counts / (np.linalg.norm( counts, ord=1, axis=1, keepdims=True )+1)
     u, s, vt = svds(counts,k=min(maxN,counts.shape[0],counts.shape[1])-1)
     print( 'singular values:', s )
-    u = u[:,range(len(s))]
-    vt = vt[range(len(s)),:]
     np.save( 'entity_embedding', u )
     np.save( 'relation_embedding', vt * np.diag(s) )
     exit( 0 )
