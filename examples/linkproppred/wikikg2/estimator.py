@@ -253,12 +253,12 @@ for i in range(test['head'].shape[0]):
                     hits[f][j] += 1
                 MRRsum[f] += 1.0/(1.0+rank)
                 if args.use_testset_negatives:
-                    ranks = [ rank ]
-                    present[f+'_set'] += 1 
-                    for neg in test[f+'_neg'][i]:
-                        ranks.append( hkt[f][r].index(neg) if neg in hkt[f][r] else nentity/2 )
-                    newrank = np.array(ranks).argsort().tolist().index(0)
-                    print( 'old rank', rank, 'new rank', newrank )
+                    present[f+'_set'] += 1
+                    testset = set(test[f+'_neg'][i])
+                    common = testset & set(hkt[f][r])
+                    higher = testset & set(hkt[f][r][range(rank))
+                    print( 'old rank', rank, 'top testset elements', len(common), 'higher testset elements', len(higher) )
+                    newrank = rank - len(higher)                    
                     for j in range(newrank,maxN):
                         hits[f+'_set'][j] += 1
                     MRRsum[f+'_set'] += 1.0/(1.0+newrank)
