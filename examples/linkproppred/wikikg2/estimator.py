@@ -27,6 +27,7 @@ def parse_args(args=None):
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('-u', '--use_testset_negatives', action='store_true')
     parser.add_argument('-F', '--Fmodel', action='store_true')
+    parser.add_argument('--Fmodel_separate', action='store_true')
 
     return parser.parse_args(args)
 
@@ -110,15 +111,23 @@ def make_tables( l ):
 
 if args.mode == 'est_Fmodel':
     from scipy.sparse.linalg import svds
-    counts = np.zeros( (nentity+1,2*nrelation+1), dtype=np.single )
+    counts = np.zeros( (nentity+1,2*nrelation+2), dtype=np.single )
     for h,r,t in triples([train]):
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
-    counts = counts / (np.linalg.norm( counts, ord=1, axis=1, keepdims=True )+1)
-    u, s, vt = svds(counts,k=min(maxN,counts.shape[0],counts.shape[1])-1)
+    counts = counts / (np.linalg.norm( counts, ord=1, axis=0, keepdims=True )+1)
+    if Fmodel_separate:
+        counts_sep = np.swapaxes( counts.reshape( nentity+1, 2, nrelation+1 ), 1, 2 )
+        u_s_vt = [svds(counts_sep[:,:,i],k=min(maxN,counts.shape[0],counts_sep.shape[1])-1) for i in (0,1)]
+        u = numpy.concatenate( u_s_vt[0][0], u_s_vt[1][0], axis=1 )
+        r_emb = numpy.concatenate( np.matmul( u_s_vt[0][2].transpose(), np.diag(u_s_vt[0][1]) ),
+                                   np.matmul( u_s_vt[1][2].transpose(), np.diag(u_s_vt[1][1]) ), axis=1 )
+    else:
+        u, s, vt = svds(counts,k=min(maxN,counts.shape[0],counts.shape[1])-1)
+        r_emb = np.matmul( vt.transpose(), np.diag(s) )
     print( 'singular values:', s )
     np.save( 'entity_embedding', u )
-    np.save( 'relation_embedding', np.matmul( vt.transpose(), np.diag(s) ) )
+    np.save( 'relation_embedding', r_emb )
     exit( 0 )
 
     # sort by reverse F model scores
