@@ -19,7 +19,7 @@ def parse_args(args=None):
         usage='convertkg.py [<args>] [-h | --help]'
     )
     parser.add_argument('dataset', type=str)
-    parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs')
+    parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs,Fmodel,est_Fmodel')
     parser.add_argument('--split', type=str, default='time')
     parser.add_argument('--newsplit', type=str)
     parser.add_argument('--maxN', type=int, default=500)
@@ -107,7 +107,7 @@ def make_tables( l ):
 
 # estimate the "F" model
 
-if args.mode == 'Fmodel':
+if args.mode == 'est_Fmodel':
     from scipy.sparse.linalg import svds
     counts = np.zeros( (nentity+1,2*nrelation+1), dtype=np.single )
     for h,r,t in triples([train]):
@@ -149,6 +149,19 @@ else:
     with open( 'est.data' ) as f:
         ( heads, tails, headkeys, tailkeys ) = pickle.load( f )
 
+# sort by reverse F model scores
+if args.mode == 'Fmodel':
+    u = np.load( 'entity_embedding' )
+    v = np.load( 'relation_embedding' )
+
+def eval_Fscores( rel2 ):
+    system( 'date' )
+    for rel in range(20):
+        score = np.dot( u, v[rel,:] )
+    system( 'date' )
+
+eval_Fscores(0)
+        
 hkt = {'head':headkeys, 'tail':tailkeys}
 ht = {'head':heads, 'tail':tails}
 htot = {'head':htotals, 'tail':ttotals}
