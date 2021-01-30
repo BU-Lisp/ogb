@@ -214,6 +214,7 @@ hits = {'head':np.zeros(maxN+1),'tail':np.zeros(maxN+1)}
 MRRsum = {'head':0, 'tail':0}
 absent = {'head':0, 'tail':0}
 present = {'head':0, 'tail':0}
+variants = []
 
 def init_stats(v):
     variants += ['_f']
@@ -221,7 +222,6 @@ def init_stats(v):
         hits[f+v] = np.zeros(maxN+1)
         MRRsum[f+v] = 0
 
-variants = []
 if args.Fmodel:
     init_stats('_f')
 if args.use_testset_negatives:
