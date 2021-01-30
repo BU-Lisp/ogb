@@ -225,6 +225,7 @@ for i in range(test['head'].shape[0]):
             if test[f][i] in hkt[f][r]:
                 rank = hkt[f][r].index(test[f][i])
                 if args.Fmodel:
+                    eval_Fscores( f, r )
                     if test[f][i] in fkt[f][r]:
                         frank = fkt[f][r].index(test[f][i])
                     else:
