@@ -126,10 +126,10 @@ if args.mode == 'Fmodel':
     v = np.load( 'relation_embedding.npy' )
 
 def eval_Fscores( rel2 ):
-    system( 'date' )
+    os.system( 'date' )
     for rel in range(20):
         score = np.dot( u, v[rel,:] )
-    system( 'date' )
+    os.system( 'date' )
 
 eval_Fscores(0)
 exit(0)        
