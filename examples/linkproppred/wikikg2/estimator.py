@@ -117,7 +117,7 @@ if args.mode == 'Fmodel':
     u, s, vt = svds(counts,k=min(maxN,counts.shape[0],counts.shape[1])-1)
     print( 'singular values:', s )
     np.save( 'entity_embedding', u )
-    np.save( 'relation_embedding', np.matmul( vt, np.diag(s) ) )
+    np.save( 'relation_embedding', np.matmul( vt.transpose(), np.diag(s) ) )
     exit( 0 )
 
 train_tab = make_tables( [train] )
