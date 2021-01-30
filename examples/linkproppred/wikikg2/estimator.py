@@ -122,8 +122,8 @@ if args.mode == 'est_Fmodel':
 
     # sort by reverse F model scores
 if args.mode == 'Fmodel':
-    u = np.load( 'entity_embedding' )
-    v = np.load( 'relation_embedding' )
+    u = np.load( 'entity_embedding.npy' )
+    v = np.load( 'relation_embedding.npy' )
 
 def eval_Fscores( rel2 ):
     system( 'date' )
