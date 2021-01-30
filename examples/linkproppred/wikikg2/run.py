@@ -77,8 +77,9 @@ def parse_args(args=None):
     parser.add_argument('--print_on_screen', action='store_true', help='log on screen or not')
     parser.add_argument('--ntriples_eval_train', type=int, default=200000, help='number of training triples to evaluate eventually')
     parser.add_argument('--neg_size_eval_train', type=int, default=500, help='number of negative samples when evaluating training triples')
-    return parser.parse_args(args)
     parser.add_argument('--test_random_sample', action='store_true' )
+
+    return parser.parse_args(args)
 
 def override_config(args):
     '''
