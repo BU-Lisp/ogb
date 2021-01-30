@@ -108,15 +108,14 @@ def make_tables( l ):
 # estimate the "F" model
 
 if args.mode == 'Fmodel':
+    from scipy.sparse.linalg import svds
     counts = np.zeros( (nentity+1,2*nrelation+1), dtype=float32 )
     for h,r,t in triples([train]):
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
     counts = counts / (np.linalg.norm( counts, ord=1, axis=1, keepdims=True )+1)
-    u, s, vt = np.linalg.svd(counts)
+    u, s, vt = svds(counts,k=min(maxN,counts.shape[1]))
     print( 'singular values:', s )
-    if len(s) > maxN:
-        s = s[range(maxN)]
     u = u[:,range(len(s))]
     vt = vt[range(len(s)),:]
     np.save( 'entity_embedding', u )
