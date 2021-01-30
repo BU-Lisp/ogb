@@ -256,9 +256,8 @@ for i in range(test['head'].shape[0]):
                     present[f+'_set'] += 1
                     testset = set(test[f+'_neg'][i])
                     common = testset & set(hkt[f][r])
-                    higher = testset & set(hkt[f][r][0:rank])
+                    newrank = len(testset & set(hkt[f][r][0:rank]))
                     print( 'old rank', rank, 'top testset elements', len(common), 'higher testset elements', len(higher) )
-                    newrank = rank - len(higher)                    
                     for j in range(newrank,maxN):
                         hits[f+'_set'][j] += 1
                     MRRsum[f+'_set'] += 1.0/(1.0+newrank)
