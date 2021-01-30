@@ -3,7 +3,7 @@ Directly compute simple statistics from the test set.
 '''
 
 import pandas as pd
-import shutil, os, string
+import shutil, os, string, re
 import os.path as osp
 #from ogb.utils.url import decide_download, download_url, extract_zip
 #from ogb.io.read_graph_raw import read_csv_graph_raw, read_csv_heterograph_raw, read_binary_graph_raw, read_binary_heterograph_raw
