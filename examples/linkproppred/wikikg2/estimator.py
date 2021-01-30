@@ -109,7 +109,7 @@ def make_tables( l ):
 
 if args.mode == 'Fmodel':
     from scipy.sparse.linalg import svds
-    counts = np.zeros( (nentity+1,2*nrelation+1), dtype=single )
+    counts = np.zeros( (nentity+1,2*nrelation+1), dtype=np.single )
     for h,r,t in triples([train]):
         counts[h,r] += 1
         counts[t,r+nrelation] += 1
