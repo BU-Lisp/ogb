@@ -221,5 +221,5 @@ for f in ('head','tail'):
 if args.use_testset_negatives:
     s = '_set'
     for N in (1,3,10):
-        print( 'Test Hits@%d = %f', N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail'])
+        print( 'Test Hits@%d = %f', N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail']) )
     print( 'Test MRR = %f', N, (MRRsum['head'+s]+MRRsum['tail'+s][(N-1)])/(present['head']+present['tail']) )
