@@ -230,6 +230,7 @@ def init_stats(v):
     for f in ('head','tail'):
         hits[f+v] = np.zeros(maxN+1)
         MRRsum[f+v] = 0
+        present[f+v] = 0
 
 if args.Fmodel:
     init_stats('_f')
