@@ -15,8 +15,8 @@ import argparse
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
-        description='Convert Knowledge Graph Formats',
-        usage='convertkg.py [<args>] [-h | --help]'
+        description='Estimate Knowledge Graph stats',
+        usage='estimator.py [<args>] [-h | --help]'
     )
     parser.add_argument('dataset', type=str)
     parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs,Fmodel,est_Fmodel')
@@ -26,6 +26,7 @@ def parse_args(args=None):
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('-u', '--use_testset_negatives', action='store_true')
+    parser.add_argument('-F', '--Fmodel', action='store_true')
 
     return parser.parse_args(args)
 
@@ -121,19 +122,18 @@ if args.mode == 'est_Fmodel':
     exit( 0 )
 
     # sort by reverse F model scores
-if args.mode == 'Fmodel':
+if args.Fmodel:
     u = np.load( 'entity_embedding.npy' )
     v = np.load( 'relation_embedding.npy' )
+    fkt = {'head':dict(), 'tail':dict()}
+    rel_offset = {'head':0, 'tail':nrelation}
 
-def eval_Fscores( rel2 ):
-    os.system( 'date' )
-    for rel in range(50):
-        score = np.dot( u, v[rel,:] )
+def eval_Fscores( f, r ):
+    if not rel in fkt[f]:
+        score = np.dot( u, v[r+rel_offset[f],:] )
         ord = np.argsort(score)
-    os.system( 'date' )
-
-eval_Fscores(0)
-exit(0)        
+        fkt[f][r] = ord[range(maxN)]
+    return fkt[f][r]
 
 train_tab = make_tables( [train] )
 test_tab = make_tables( [test] )
@@ -224,6 +224,12 @@ for i in range(test['head'].shape[0]):
             present[f] += 1 
             if test[f][i] in hkt[f][r]:
                 rank = hkt[f][r].index(test[f][i])
+                if args.Fmodel:
+                    if test[f][i] in fkt[f][r]:
+                        frank = fkt[f][r].index(test[f][i])
+                    else:
+                        frank = -1
+                    print( r, test[f][i], rank, frank )
                 if i % 100 == 1:
                     print( i, test[f][i], rank, hkt[f][r][:10] )
                 for j in range(rank,maxN):
