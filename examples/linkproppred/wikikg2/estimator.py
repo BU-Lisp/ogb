@@ -58,9 +58,9 @@ else:
 
 all = set()
 
-nentity = max(train['head'].shape[0],train['tail'].shape[0])
-nrelation = train['relation'].shape[0]
-print( 'nentity=%d nrelation=%d', nentity, nrelation )
+nentity = max(np.max(train['head']),np.max(train['tail']))
+nrelation = np.max(train['relation'])
+print( 'nentity=%d nrelation=%d' % nentity % nrelation )
 
 # return N samples of field f for relation r
 def sample(N,f,r,v,ex=extra):
