@@ -256,7 +256,7 @@ for i in range(test['head'].shape[0]):
                     present[f+'_set'] += 1
                     testset = set(test[f+'_neg'][i])
                     common = testset & set(hkt[f][r])
-                    higher = testset & set(hkt[f][r][range(rank))
+                    higher = testset & set(hkt[f][r][range(rank)])
                     print( 'old rank', rank, 'top testset elements', len(common), 'higher testset elements', len(higher) )
                     newrank = rank - len(higher)                    
                     for j in range(newrank,maxN):
