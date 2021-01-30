@@ -35,6 +35,8 @@ make_data = True
 newsplit = args.newsplit
 
 meta = 'dataset_' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
+if not os.path.exists(meta):
+    meta = 'dataset/' + re.sub('-','_',args.dataset) + '/meta_dict.pt'
 if os.path.exists(meta):
     meta_dict = torch.load(meta)
     data_in = meta_dict['dir_path']
