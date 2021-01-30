@@ -102,6 +102,8 @@ def save_model(model, optimizer, save_variable_list, args):
     
     argparse_dict = vars(args)
     with open(os.path.join(args.save_path, 'config.json'), 'w') as fjson:
+        for x in argparse_dict.keys():
+            json.dump({x:argparse_dict[x]}, fjson)
         json.dump(argparse_dict, fjson)
 
     torch.save({
