@@ -83,8 +83,8 @@ class KGEModel(nn.Module):
         if model_name == 'ComplEx' and (not double_entity_embedding or not double_relation_embedding):
             raise ValueError('ComplEx should use --double_entity_embedding and --double_relation_embedding')
 
-        if model_name in ['PairRE','F'] and not double_relation_embedding:
-            raise ValueError('PairRE and F should use --double_relation_embedding')
+        if model_name in ['PairRE','F','RE'] and not double_relation_embedding:
+            raise ValueError('PairRE and F/RE should use --double_relation_embedding')
 
         self.evaluator = evaluator
 
@@ -177,6 +177,7 @@ class KGEModel(nn.Module):
             'TuckER': self.TuckER,
             'Groups': self.Groups,
             'F': self.F,
+            'RE': self.F,
         }
         
         if self.model_name in model_func:
