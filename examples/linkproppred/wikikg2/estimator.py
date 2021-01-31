@@ -270,14 +270,14 @@ for i in range(test['head'].shape[0]):
                         hits[f+'_f'][j] += 1
                     MRRsum[f+'_f'] += 1.0/(1.0+frank)
 
-                
+
+print( absent, present )                    
 for f in ('head','tail'):
-    print( f, 'absent=', absent[f], 'present=', present[f] )
     print( f, 'estHits1=', estHits1[f] )
     for s in variants:
         fs = f + s
-        print( fs, 'MRR=', MRRsum[fs]/present[fs] )
-        print( fs, np.array2string( hits[fs][:10]/present[fs], precision=8, threshold=np.inf, max_line_width=np.inf ) )
+        print( fs, 'MRR=', MRRsum[fs]/present[f] )
+        print( fs, np.array2string( hits[fs][:10]/present[f], precision=8, threshold=np.inf, max_line_width=np.inf ) )
 
 for s in variants:
     for N in (1,3,10):
