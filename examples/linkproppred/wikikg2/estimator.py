@@ -237,6 +237,9 @@ if args.Fmodel:
 if args.use_testset_negatives:
     init_stats('_set')
 
+# what is correct rank given this info ????
+# read in top 100 for each relation and give those scores
+
 for i in range(test['head'].shape[0]):
     r = test['relation'][i]
     for f in ('head','tail'):
@@ -252,7 +255,7 @@ for i in range(test['head'].shape[0]):
                 for j in range(rank,maxN):
                     hits[f][j] += 1
                 MRRsum[f] += 1.0/(1.0+rank)
-                if args.use_testset_negatives:
+                if args.use_testset_negatives: # not right ?
                     present[f+'_set'] += 1
                     testset = set(test[f+'_neg'][i])
                     common = testset & set(hkt[f][r])
