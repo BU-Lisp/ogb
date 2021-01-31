@@ -281,5 +281,5 @@ for f in ('head','tail'):
 
 for s in variants:
     for N in (1,3,10):
-        print( 'Test%s Hits@%d = %f' % (s, N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head'+s]+present['tail'+s])) )
-    print( 'Test%s MRR = %f' % (s, (MRRsum['head'+s]+MRRsum['tail'+s])/(present['head'+s]+present['tail'+s])) )
+        print( 'Test%s Hits@%d = %f' % (s, N, (hits['head'+s][(N-1)]+hits['tail'+s][(N-1)])/(present['head']+present['tail'])) )
+    print( 'Test%s MRR = %f' % (s, (MRRsum['head'+s]+MRRsum['tail'+s])/(present['head']+present['tail'])) )
