@@ -182,7 +182,7 @@ def main(args):
         override_config(args)
 
     run_label = ''
-    if len(args.save_path)>0 and args.save_path[-1]=='-':        
+    if args.save_path and args.save_path[-1]=='-':        
         ( run_label, args.save_path ) = ( args.save_path, None )
     if args.save_path == None:
         args.save_path = 'log/%s/%s/%s%s-%s/%s'%(args.dataset, args.model, run_label, args.hidden_dim, args.gamma, time.time())
