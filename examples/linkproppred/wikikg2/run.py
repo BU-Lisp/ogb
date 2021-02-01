@@ -231,7 +231,7 @@ def main(args):
         train_triples = append_rng( args, nentity, nrelation-1, train_triples )
     if args.dump_train:
         for i in range(train_triples['head'].shape[0]):
-            print( train_triples['head'],train_triples['relation'],train_triples['tail'], sep=',' )
+            print( train_triples['head'][i],train_triples['relation'][i],train_triples['tail'][i], sep=',' )
         exit(0)
     logging.info('#train: %d' % len(train_triples['head']))
     valid_triples = split_dict['valid']
