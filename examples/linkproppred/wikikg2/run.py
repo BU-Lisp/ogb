@@ -78,6 +78,7 @@ def parse_args(args=None):
     parser.add_argument('--ntriples_eval_train', type=int, default=200000, help='number of training triples to evaluate eventually')
     parser.add_argument('--neg_size_eval_train', type=int, default=500, help='number of negative samples when evaluating training triples')
     parser.add_argument('--test_random_sample', action='store_true' )
+    parser.add_argument('--dump_train', action='store_true' )
 
     return parser.parse_args(args)
 
@@ -228,6 +229,10 @@ def main(args):
     train_triples = split_dict['train']
     if args.add_random_fraction>0:
         train_triples = append_rng( args, nentity, nrelation-1, train_triples )
+    if args.dump_train:
+        for i in range(train_triples['head'].shape[0]):
+            print( train_triples['head'],train_triples['relation'],train_triples['tail'], sep=',' )
+        exit(0)
     logging.info('#train: %d' % len(train_triples['head']))
     valid_triples = split_dict['valid']
     logging.info('#valid: %d' % len(valid_triples['head']))
