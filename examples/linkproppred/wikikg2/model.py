@@ -292,6 +292,30 @@ class KGEModel(nn.Module):
             score = tail * re_tail
         return torch.sum(score, dim=2)
 
+    
+    @staticmethod
+    def extra_test_statistics(input_dict):
+        mode, y_pred_pos, y_pred_neg = input_dict['mode'], input_dict['y_pred_pos'], input_dict['y_pred_neg']
+        positive_sample = input_dict['positive_sample']
+        negative_sample = input_dict['negative_sample']
+
+        y_pred = torch.cat([y_pred_pos.view(-1,1), y_pred_neg], dim = 1)
+        argsort = torch.argsort(y_pred, dim = 1, descending = True)
+        ranking_list = (argsort == 0).nonzero(as_tuple=False)
+        ranking_list = ranking_list[:, 1] + 1
+        toparg = argsort[:,0]
+        nextarg = argsort[:,1]
+        y_neg_mean = torch.mean(y_pred_neg,1)
+        y_neg_sd = torch.std(y_pred_neg,1)
+        print( 'mode', 'head', 'relation', 'tail', 'neg1', 'neg2', 'score', 'rank', 'topscore', 'toparg', 'mean', 'sd', 'nextscore', 'nextarg' )
+        for i in range(len(ranking_list)):
+            print( mode, positive_sample[i,0].item(), positive_sample[i,1].item(), positive_sample[i,2].item(),
+                   negative_sample[i,toparg].item(), negative_sample[i,nextarg].item(),
+                   y_pred_pos[i].item(), ranking_list[i].item(), 
+                   y_pred[i,toparg[i].item()].item(), toparg[i].item(),
+                   y_neg_mean[i].item(), y_neg_sd[i].item(),
+                   y_pred[i,nextarg[i].item()].item(), nextarg[i].item() )
+
     @staticmethod
     def train_step(model, optimizer, train_iterator, args):
         '''
@@ -405,6 +429,13 @@ class KGEModel(nn.Module):
                                                 'y_pred_neg': score[:, 1:]})
                     for metric in batch_results:
                         test_logs[metric].append(batch_results[metric])
+
+                    if args.extra_test_statistics:
+                        extra_test_statistics({'mode': mode,
+                                               'y_pred_pos': score[:, 0], 
+                                               'y_pred_neg': score[:, 1:],
+                                               'positive_sample': positive_sample,
+                                               'negative_sample': negative_sample })
 
                     if step % args.test_log_steps == 0:
                         logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
