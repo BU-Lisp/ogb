@@ -35,7 +35,7 @@ def extra_test_statistics(input_dict):
     print( 'mode', 'head', 'relation', 'tail', 'neg1', 'neg2', 'score', 'rank', 'topscore', 'toparg', 'mean', 'sd', 'nextscore', 'nextarg' )
     for i in range(len(ranking_list)):
         print( mode, positive_sample[i,0].item(), positive_sample[i,1].item(), positive_sample[i,2].item(),
-               negative_sample[i,toparg].item(), negative_sample[i,nextarg].item(),
+               negative_sample[i,toparg[i]].item(), negative_sample[i,nextarg[i]].item(),
                y_pred_pos[i].item(), ranking_list[i].item(), 
                y_pred[i,toparg[i].item()].item(), toparg[i].item(),
                y_neg_mean[i].item(), y_neg_sd[i].item(),
