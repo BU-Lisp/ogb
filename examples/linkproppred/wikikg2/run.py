@@ -165,9 +165,9 @@ def log_metrics(mode, step, metrics, writer):
 
 def append_rng( args, nentity, set_relation, train_triples ):
     import networkx as nx
-    edge_probability = args.add_random_fraction/nentity
-    logging.info('add_random_fraction: %f' % args.add_random_fraction)
-    logging.info('edge_probability: %f' % edge_probability)
+    edge_probability = args.add_random_fraction*len(train_triples['head'])/nentity/nentity
+    logging.info('add_random_fraction (* # train edges): %f' % args.add_random_fraction)
+    logging.info('edge_probability: %.8f' % edge_probability)
     logging.info('seed: %d' % args.seed)
     g = nx.fast_gnp_random_graph(nentity, edge_probability, seed=args.seed, directed=True)
     edges = np.array(g.edges)
