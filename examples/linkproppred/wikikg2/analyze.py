@@ -61,7 +61,7 @@ if args.motif_data!='':
         for m in motifs:
             mid = (m[0], m[1], m[2])
             motif_count[mid] = motif_count.setdefault(mid,0) + 1
-            print( 'counted', sum(motif_count.values()), 'motifs' )
+        print( 'counted', sum(motif_count.values()), 'motifs,' len(motif_count), 'distinct' )
         z = np.zeros(len(motif_count.keys()),dtype=float)
         i = 0
         for m in motif_count.keys():
