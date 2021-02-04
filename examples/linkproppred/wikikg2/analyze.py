@@ -49,9 +49,9 @@ if args.motif_data!='':
         if args.random_motifs>0:
             z = np.zeros(args.random_motifs,dtype=float)
             for i in range(args.random_motifs):
-            m = random.sample( range(data.shape[0]), 3 )
-            z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
-            print( m, 'random', z[i], file=out )
+                m = random.sample( range(data.shape[0]), 3 )
+                z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
+                print( m, 'random', z[i], file=out )
             print( 'random mean=', np.mean(z), 'sd=', np.std(z) )
             mean_ran_z, sd_ran_z, n_ran_z = np.mean(z), np.std(z), args.random_motifs
         motif_npzfile = np.load(args.motif_data)
