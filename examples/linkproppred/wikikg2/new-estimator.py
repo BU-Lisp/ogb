@@ -36,6 +36,8 @@ args = parse_args()
 
 make_data = True
 data_in = 'dataset/' + args.dataset
+if osp(data_in+'/split/'+args.split):
+    data_in = data_in+'/split/'+args.split
 newsplit = args.newsplit
 
 fract = args.sample_fraction
@@ -44,10 +46,10 @@ maxN = args.maxN
 max_motifs_per_edge = 1000
 
 if make_data:
-    train = torch.load(data_in+'/split/'+args.split+'/train.pt' )
-    valid = torch.load(data_in+'/split/'+args.split+'/valid.pt' )
+    train = torch.load(data_in+'/train.pt' )
+    valid = torch.load(data_in+'/valid.pt' )
     nrelation = max(train['relation'])
-test  = torch.load(data_in+'/split/'+args.split+'/test.pt' )
+test  = torch.load(data_in+'/test.pt' )
 
 all = set()
 
