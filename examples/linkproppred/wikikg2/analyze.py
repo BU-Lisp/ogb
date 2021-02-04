@@ -48,7 +48,7 @@ if args.random_motifs>0:
         z = np.zeros(args.random_motifs,dtype=int)
         for i in range(args.random_motifs):
             m = random.sample( range(data.shape[0]), 3 )
-            data[i] = np.linalg.norm(motif(data[m,:]), ord=1)
+            z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
             print( m, data[i], file=out )
     print( 'mean=', np.mean(z), 'sd=', np.std(z) )
     exit(0)
