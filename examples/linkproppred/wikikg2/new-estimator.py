@@ -45,6 +45,7 @@ fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
 max_motifs_per_edge = 1000
+many_motifs = 0
 
 if make_data:
     train = torch.load(data_in+'/train.pt')
@@ -84,7 +85,6 @@ def count_simple(edge_table,rel_table,edges):
             
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
-many_motifs = 0
 
 def list_triangles(edge_table,rel_table,edges):
     for (h,r,t) in edges:
