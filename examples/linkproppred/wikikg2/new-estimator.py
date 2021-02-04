@@ -158,8 +158,8 @@ if args.mode == 'count_motifs':
                  motifs_per_edge_histogram=motifs_per_edge_histogram )
     else:
         np.savez(args.dataset+'/counts', motifs=dict_to_nparray(motif_count))
-    print( 'nentity', 'nentity2', 'nrelations', 'nedges', 'ntriangles' )
-    print( len(edge_table), nentity, nrelation, nedges, len(triangles) )
+    print( 'nentity', 'max.head', 'max.tail', 'nrelations', 'nedges', 'ntriangles' )
+    print( len(edge_table), max(train['head']), nentity, nrelation, nedges, len(triangles) )
     exit(0)
 
 # return N samples of field f for relation r
