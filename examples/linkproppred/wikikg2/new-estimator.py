@@ -84,6 +84,8 @@ def count_simple(edge_table,rel_table,edges):
             
 # given a list of edges, find all triangle motifs in which it is the first edge
 # edge_table is sets of tails indexed by head, rel_table is rels indexed by both
+many_motifs = 0
+
 def list_triangles(edge_table,rel_table,edges):
     for (h,r,t) in edges:
         i = 0
@@ -110,8 +112,9 @@ def list_triangles(edge_table,rel_table,edges):
                                 k = ( r, r2 )
                                 count_inc2[k] = count_inc2.setdefault(k,0) + 1
         if i >= max_motifs_per_edge:
-            print( 'edge with many motifs', h, r, t )
+            print( 'edge with many motifs', h, r, t, 'N=', i )
             i = max_motifs_per_edge-1
+            many_motifs += i
         motifs_per_edge_histogram[i] += 1        
 
 def build_edge_rel_table( l ):
@@ -173,8 +176,8 @@ if args.mode == 'count_motifs':
                  motifs_per_edge_histogram=motifs_per_edge_histogram )
     else:
         np.savez(args.dataset+'/counts', motifs=dict_to_nparray(motif_count))
-    print( 'dataset', 'nentity', 'nrelations', 'nedges', 'ntriangles' )
-    print( args.dataset, nentity, nrelation, nedges, len(triangles) )
+    print( 'dataset', 'nentity', 'nrelations', 'nedges', 'ntriangles', 'many_triangles' )
+    print( args.dataset, nentity, nrelation, nedges, len(triangles), many_motifs )
 #    print( 'dataset', 'nentity', 'max.head', 'max.tail', 'nrelations', 'nedges', 'ntriangles' )
 #    print( args.dataset, len(edge_table), max(train['head']), nentity, nrelation, nedges, len(triangles) )
     exit(0)
