@@ -28,6 +28,7 @@ def parse_args(args=None):
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('--count_all', action='store_true')
     parser.add_argument('--write_all_motifs', action='store_true')
+    parser.add_argument('--add_test_to_train', action='store_true')
 
  
     return parser.parse_args(args)
@@ -52,6 +53,9 @@ if make_data:
     nedges = len(train['head'])
     nentity = max(train['tail'])
 test  = torch.load(data_in+'/test.pt')
+if args.add_test_to_train:
+    for k in test.keys():
+        train[k].append(test[k])
 
 all = set()
 
@@ -144,9 +148,12 @@ if args.mode == 'count_motifs':
     sample = range(train['head'].shape[0])
     if args.maxN < len(sample):
         sample = random.sample( sample, args.maxN )
+        print( 'sampling', args.maxN, 'out of' len(train['head']) )
+        some = some_triples( train, sample )
+    else:
+        some = train
     triangles = []
     motif_count = dict()
-    some = some_triples( train, sample )
     for tri in list_triangles( edge_table, rel_table, some ):
         triangles.append(tri[1])
         m = tri[1]
