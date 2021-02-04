@@ -45,7 +45,7 @@ data = np.load(args.infile)
 
 if args.random_motifs>0:
     with open(args.outfile, 'w') as out:
-        z = np.zeros(args.random_motifs,dtype=int)
+        z = np.zeros(args.random_motifs,dtype=float)
         for i in range(args.random_motifs):
             m = random.sample( range(data.shape[0]), 3 )
             z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
@@ -63,7 +63,7 @@ if args.motif_data!='':
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
     print( 'counted', sum(motif_count.values()), 'motifs' )
     with open(args.outfile, 'w') as out:
-        z = np.zeros(len(motif_count.keys()),dtype=int)
+        z = np.zeros(len(motif_count.keys()),dtype=float)
         i = 0
         for m in motif_count.keys():
 #            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
