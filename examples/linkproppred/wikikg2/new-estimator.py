@@ -56,7 +56,9 @@ test  = torch.load(data_in+'/test.pt')
 if args.add_test_to_train:
     for k in test.keys():
         train[k].append(test[k])
-
+if maxN<0:
+    maxN = nedges
+    
 all = set()
 
 def some_triples(t,sample):
@@ -146,9 +148,9 @@ if args.mode == 'count_motifs':
     print( 'Built edge and relation tables...' )
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge,dtype=int)
     sample = range(train['head'].shape[0])
-    if args.maxN < len(sample):
-        sample = random.sample( sample, args.maxN )
-        print( 'sampling', args.maxN, 'out of' len(train['head']) )
+    if maxN < len(sample):
+        sample = random.sample( sample, maxN )
+        print( 'sampling', maxN, 'out of', len(train['head']) )
         some = some_triples( train, sample )
     else:
         some = train
