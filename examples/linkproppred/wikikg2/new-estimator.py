@@ -36,7 +36,7 @@ args = parse_args()
 
 make_data = True
 data_in = 'dataset/' + args.dataset
-if osp(data_in+'/split/'+args.split):
+if osp.exists(data_in+'/split/'+args.split):
     data_in = data_in+'/split/'+args.split
 newsplit = args.newsplit
 
