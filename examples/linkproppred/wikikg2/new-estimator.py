@@ -55,7 +55,7 @@ if make_data:
 test  = torch.load(data_in+'/test.pt')
 if args.add_test_to_train:
     for k in test.keys():
-        train[k] = np.concatenate( train[k], test[k] )
+        train[k] = np.concatenate([ train[k], test[k] ])
 if maxN<0:
     maxN = nedges
     
