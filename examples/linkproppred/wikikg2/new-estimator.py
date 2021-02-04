@@ -146,16 +146,16 @@ if args.mode == 'count_motifs':
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
     if args.write_all_motifs:
-        np.savez(args.dataset+'motifs', motifs=np.array(triangles) )
+        np.savez(args.dataset+'/motifs', motifs=np.array(triangles) )
     if args.count_all:
         ( table1, table2 ) = count_simple( edge_table, rel_table, some )
-        np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count),
+        np.savez(args.dataset+'/counts', motifs=dict_to_nparray(motif_count),
                  inc1=dict_to_nparray(count_inc1),
                  inc2=dict_to_nparray(count_inc2),
                  table1=table1, table2=table2,
                  motifs_per_edge_histogram=motifs_per_edge_histogram )
     else:
-        np.savez(args.dataset+'counts', motifs=dict_to_nparray(motif_count))
+        np.savez(args.dataset+'/counts', motifs=dict_to_nparray(motif_count))
     exit(0)
 
 # return N samples of field f for relation r
