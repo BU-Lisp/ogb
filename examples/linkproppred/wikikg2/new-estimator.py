@@ -44,7 +44,7 @@ newsplit = args.newsplit
 fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
-max_motifs_per_edge = 1000
+max_motifs_per_edge = 10000
 
 if make_data:
     train = torch.load(data_in+'/train.pt')
