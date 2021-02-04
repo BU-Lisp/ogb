@@ -142,7 +142,7 @@ if args.mode == 'count_motifs':
     motif_count = dict()
     some = some_triples( train, sample )
     for tri in list_triangles( edge_table, rel_table, some ):
-#        triangles.append(tri[1])
+        triangles.append(tri[1])
         m = tri[1]
         mid = (m[0], m[1], m[2])
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
