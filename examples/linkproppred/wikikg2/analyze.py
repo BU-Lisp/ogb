@@ -51,7 +51,7 @@ if args.random_motifs>0:
             z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
             print( m, z[i], file=out )
     print( 'mean=', np.mean(z), 'sd=', np.std(z) )
-    mean.ran.z, sd.ran.z, n.ran.z = np.mean(z), np.std(z), args.random_motifs
+    mean_ran_z, sd_ran_z, n_ran_z = np.mean(z), np.std(z), args.random_motifs
     
 if args.motif_data!='':
     motif_npzfile = np.load(args.motif_data)
@@ -72,10 +72,10 @@ if args.motif_data!='':
             print( m, motif_count[m], z[i], file=out )
             i += 1
         print( 'mean=', np.mean(z), 'sd=', np.std(z) )
-        mean.z, sd.z, n.z = np.mean(z), np.std(z), i
+        mean_z, sd_z, n_z = np.mean(z), np.std(z), i
         if args.random_motifs>0:
-            sdelta = sqrt( sd.ran.z*sd.ran.z/n.ran.z +  sd.z*sd.z/n.z )
-            print( 't value=', (mean.ran.z-mean.z)/sdelta )
+            sdelta = sqrt( sd_ran_z*sd_ran_z/n_ran_z +  sd_z*sd_z/n_z )
+            print( 't value=', (mean_ran_z-mean_z)/sdelta )
     exit(0)
     
 if args.sample<1.0:
