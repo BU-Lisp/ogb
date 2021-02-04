@@ -67,8 +67,9 @@ if args.motif_data!='':
         i = 0
         for m in motif_count.keys():
 #            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
-            print( m )
+#            print( m )
             z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
+            i += 1
             print( m, motif_count[m], z[i], file=out )
         print( 'mean=', np.mean(z), 'sd=', np.std(z) )
     exit(0)
