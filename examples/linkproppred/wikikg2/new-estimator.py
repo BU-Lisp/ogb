@@ -46,12 +46,12 @@ maxN = args.maxN
 max_motifs_per_edge = 1000
 
 if make_data:
-    train = torch.load(data_in+'/train.pt' )
-    valid = torch.load(data_in+'/valid.pt' )
+    train = torch.load(data_in+'/train.pt')
+    valid = torch.load(data_in+'/valid.pt')
     nrelation = max(train['relation'])
     nedges = len(train['head'])
     nentity = max(train['tail'])
-test  = torch.load(data_in+'/test.pt' 
+test  = torch.load(data_in+'/test.pt')
 
 all = set()
 
