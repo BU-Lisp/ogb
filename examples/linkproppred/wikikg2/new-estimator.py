@@ -45,7 +45,6 @@ fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
 max_motifs_per_edge = 1000
-many_motifs = 0
 
 if make_data:
     train = torch.load(data_in+'/train.pt')
@@ -150,6 +149,7 @@ if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
     print( 'Built edge and relation tables...' )
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge,dtype=int)
+    many_motifs = 0
     sample = range(train['head'].shape[0])
     if maxN < len(sample):
         sample = random.sample( sample, maxN )
