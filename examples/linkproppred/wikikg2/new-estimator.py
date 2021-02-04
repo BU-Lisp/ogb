@@ -16,8 +16,8 @@ import argparse
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
-        description='Convert Knowledge Graph Formats',
-        usage='convertkg.py [<args>] [-h | --help]'
+        description='Estimate Knowledge Graph FormatsData',
+        usage='new-estimator.py [<args>] [-h | --help]'
     )
     parser.add_argument('dataset', type=str)
     parser.add_argument('-m', '--mode', type=str, help='make_negs,check_negs,count_motifs')
