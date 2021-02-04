@@ -62,6 +62,7 @@ if args.motif_data!='':
     with open(args.outfile, 'w') as out:
         for m in motif_count.keys():
 #            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
+            print( m )
             print( m, motif_count[m], np.linalg.norm(motif(data[m,:]), ord=1), file=out )
     exit(0)
     
