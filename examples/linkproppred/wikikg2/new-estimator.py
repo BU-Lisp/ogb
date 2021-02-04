@@ -49,7 +49,9 @@ if make_data:
     train = torch.load(data_in+'/train.pt' )
     valid = torch.load(data_in+'/valid.pt' )
     nrelation = max(train['relation'])
-test  = torch.load(data_in+'/test.pt' )
+    nedges = len(train['head'])
+    nentity = max(train['tail'])
+test  = torch.load(data_in+'/test.pt' 
 
 all = set()
 
@@ -156,6 +158,8 @@ if args.mode == 'count_motifs':
                  motifs_per_edge_histogram=motifs_per_edge_histogram )
     else:
         np.savez(args.dataset+'/counts', motifs=dict_to_nparray(motif_count))
+    print( 'nentity', 'nentity2', 'nrelations', 'nedges', 'ntriangles' )
+    print( len(edge_table), nentity, nrelation, nedges, len(triangles) )
     exit(0)
 
 # return N samples of field f for relation r
