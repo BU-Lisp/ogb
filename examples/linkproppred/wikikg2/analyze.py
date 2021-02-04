@@ -49,7 +49,7 @@ if args.random_motifs>0:
         for i in range(args.random_motifs):
             m = random.sample( range(data.shape[0]), 3 )
             z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
-            print( m, data[i], file=out )
+            print( m, z[i], file=out )
     print( 'mean=', np.mean(z), 'sd=', np.std(z) )
     exit(0)
     
