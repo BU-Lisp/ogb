@@ -63,10 +63,14 @@ if args.motif_data!='':
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
     print( 'counted', sum(motif_count.values()), 'motifs' )
     with open(args.outfile, 'w') as out:
+        z = np.zeros(len(motif_count.keys()),dtype=int)
+        i = 0
         for m in motif_count.keys():
 #            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
             print( m )
-            print( m, motif_count[m], np.linalg.norm(motif(data[m,:]), ord=1), file=out )
+            z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
+            print( m, motif_count[m], z[i], file=out )
+        print( 'mean=', np.mean(z), 'sd=', np.std(z) )
     exit(0)
     
 if args.sample<1.0:
