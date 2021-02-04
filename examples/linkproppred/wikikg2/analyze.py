@@ -65,9 +65,10 @@ if args.motif_data!='':
         z = np.zeros(len(motif_count.keys()),dtype=float)
         i = 0
         for m in motif_count.keys():
-            z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
-            print( m, motif_count[m], z[i], file=out )
-            i += 1
+            if m[0]!=m[1] and m[1]!=m[2] and m[2]!=m[0]:
+                z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
+                print( m, motif_count[m], z[i], file=out )
+                i += 1
         print( 'motif mean=', np.mean(z), 'sd=', np.std(z) )
         mean_z, sd_z, n_z = np.mean(z), np.std(z), i
         if args.random_motifs>0:
