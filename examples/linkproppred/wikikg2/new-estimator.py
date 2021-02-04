@@ -87,7 +87,7 @@ def count_simple(edge_table,rel_table,edges):
 def list_triangles(edge_table,rel_table,edges):
     for (h,r,t) in edges:
         i = 0
-        if not h in edge_table:
+        if not h in edge_table and h!=t:
             print( 'head not in edge_table', h, r, t )
         if t in edge_table:
             both = edge_table[h] & edge_table[t]
