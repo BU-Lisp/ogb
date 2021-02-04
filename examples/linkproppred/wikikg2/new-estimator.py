@@ -116,8 +116,12 @@ def build_edge_rel_table( l ):
     for h,r,t in triples(l):
         eth = et.setdefault(h,set())
         eth.add( t )
+        eth = et.setdefault(t,set())
+        eth.add( h )
         rtht = rt.setdefault((h,t),[])
         rtht.append( r )
+        rtht = rt.setdefault((t,h),[])
+        rtht.append( -1-r )
         i += 1
         if False and i % 10000 == 0:
             print( i, h, r, t, eth, rtht )
@@ -145,7 +149,6 @@ if args.mode == 'count_motifs':
     for tri in list_triangles( edge_table, rel_table, some ):
         triangles.append(tri[1])
         m = tri[1]
-        print(m)
         mid = (m[0], m[1], m[2])
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
