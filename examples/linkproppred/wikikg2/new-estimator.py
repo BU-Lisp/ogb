@@ -113,7 +113,7 @@ def list_triangles(edge_table,rel_table,edges):
         if i >= max_motifs_per_edge:
             print( 'edge with many motifs', h, r, t, 'N=', i )
             i = max_motifs_per_edge-1
-            many_motifs += i
+            many_motifs[0] += i
         motifs_per_edge_histogram[i] += 1        
 
 def build_edge_rel_table( l ):
@@ -149,7 +149,7 @@ if args.mode == 'count_motifs':
     (edge_table, rel_table) = build_edge_rel_table( [train] )
     print( 'Built edge and relation tables...' )
     motifs_per_edge_histogram = np.zeros(max_motifs_per_edge,dtype=int)
-    many_motifs = 0
+    many_motifs = np.zeros(1,dtype=int)
     sample = range(train['head'].shape[0])
     if maxN < len(sample):
         sample = random.sample( sample, maxN )
@@ -177,7 +177,7 @@ if args.mode == 'count_motifs':
     else:
         np.savez(args.dataset+'/counts', motifs=dict_to_nparray(motif_count))
     print( 'dataset', 'nentity', 'nrelations', 'nedges', 'ntriangles', 'many_triangles' )
-    print( args.dataset, nentity, nrelation, nedges, len(triangles), many_motifs )
+    print( args.dataset, nentity, nrelation, nedges, len(triangles), many_motifs[0] )
 #    print( 'dataset', 'nentity', 'max.head', 'max.tail', 'nrelations', 'nedges', 'ntriangles' )
 #    print( args.dataset, len(edge_table), max(train['head']), nentity, nrelation, nedges, len(triangles) )
     exit(0)
