@@ -43,36 +43,33 @@ args = parse_args()
 
 data = np.load(args.infile)
 
-if args.random_motifs>0:
+    
+if args.motif_data!='':
     with open(args.outfile, 'w') as out:
-        z = np.zeros(args.random_motifs,dtype=float)
-        for i in range(args.random_motifs):
+        if args.random_motifs>0:
+            z = np.zeros(args.random_motifs,dtype=float)
+            for i in range(args.random_motifs):
             m = random.sample( range(data.shape[0]), 3 )
             z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
             print( m, 'random', z[i], file=out )
-    print( 'mean=', np.mean(z), 'sd=', np.std(z) )
-    mean_ran_z, sd_ran_z, n_ran_z = np.mean(z), np.std(z), args.random_motifs
-    
-if args.motif_data!='':
-    motif_npzfile = np.load(args.motif_data)
-    print( 'read motif data containing', motif_npzfile.files )
-    motifs = motif_npzfile['motifs']
-    motif_count = dict()
-    for m in motifs:
-        mid = (m[0], m[1], m[2])
-        motif_count[mid] = motif_count.setdefault(mid,0) + 1
-    print( 'counted', sum(motif_count.values()), 'motifs' )
-    with open(args.outfile, 'w') as out:
+            print( 'random mean=', np.mean(z), 'sd=', np.std(z) )
+            mean_ran_z, sd_ran_z, n_ran_z = np.mean(z), np.std(z), args.random_motifs
+        motif_npzfile = np.load(args.motif_data)
+        print( 'read motif data containing', motif_npzfile.files )
+        motifs = motif_npzfile['motifs']
+        motif_count = dict()
+        for m in motifs:
+            mid = (m[0], m[1], m[2])
+            motif_count[mid] = motif_count.setdefault(mid,0) + 1
+            print( 'counted', sum(motif_count.values()), 'motifs' )
         z = np.zeros(len(motif_count.keys()),dtype=float)
         i = 0
         for m in motif_count.keys():
-#            print( m, motif_count[m], np.linalg.norm(data[m[0],:]+data[m[1],:]-data[m[2],:], ord=1 ), file=out )
-#            print( m )
             z[i] = np.linalg.norm(motif(data[m,:]), ord=1)
             print( m, motif_count[m], z[i], file=out )
             i += 1
-        print( 'mean=', np.mean(z), 'sd=', np.std(z) )
-        mean_z, sd_z, n_z = np.mean(z), np.std(z), i
+            print( 'motif mean=', np.mean(z), 'sd=', np.std(z) )
+            mean_z, sd_z, n_z = np.mean(z), np.std(z), i
         if args.random_motifs>0:
             sdelta = np.sqrt( sd_ran_z*sd_ran_z/n_ran_z +  sd_z*sd_z/n_z )
             print( 't value=', (mean_ran_z-mean_z)/sdelta )
