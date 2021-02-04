@@ -29,7 +29,7 @@ def parse_args(args=None):
     parser.add_argument('--count_all', action='store_true')
     parser.add_argument('--write_all_motifs', action='store_true')
     parser.add_argument('--add_test_to_train', action='store_true')
-
+    parser.add_argument('--both_orientations', action='store_true')
  
     return parser.parse_args(args)
 
@@ -44,7 +44,7 @@ newsplit = args.newsplit
 fract = args.sample_fraction
 extra = 1.1 # extra sample so that we can exclude triples in the graph
 maxN = args.maxN
-max_motifs_per_edge = 10000
+max_motifs_per_edge = 1000
 
 if make_data:
     train = torch.load(data_in+'/train.pt')
@@ -111,7 +111,7 @@ def list_triangles(edge_table,rel_table,edges):
                                 count_inc2[k] = count_inc2.setdefault(k,0) + 1
         if i >= max_motifs_per_edge:
             print( 'edge with many motifs', h, r, t )
-            i = max_motifs_per_edge
+            i = max_motifs_per_edge-1
         motifs_per_edge_histogram[i] += 1        
 
 def build_edge_rel_table( l ):
@@ -122,12 +122,13 @@ def build_edge_rel_table( l ):
         if h!=t:
             eth = et.setdefault(h,set())
             eth.add( t )
-            eth = et.setdefault(t,set())
-            eth.add( h )
             rtht = rt.setdefault((h,t),[])
             rtht.append( r )
-            rtht = rt.setdefault((t,h),[])
-            rtht.append( -1-r )
+            if args.both_orientations:
+                eth = et.setdefault(t,set())
+                eth.add( h )
+                rtht = rt.setdefault((t,h),[])
+                rtht.append( -1-r )
             i += 1
         if False and i % 10000 == 0:
             print( i, h, r, t, eth, rtht )
