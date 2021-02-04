@@ -45,7 +45,7 @@ data = np.load(args.infile)
 
 if args.random_motifs>0:
     with open(args.outfile, 'w') as out:
-        data = numpy.zeros(range(args.random_motifs))
+        data = np.zeros(range(args.random_motifs))
         for i in range(args.random_motifs):
             m = random.sample( range(data.shape[0]), 3 )
             data[i] = np.linalg.norm(motif(data[m,:]), ord=1)
