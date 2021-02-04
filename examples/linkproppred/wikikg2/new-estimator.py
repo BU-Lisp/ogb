@@ -94,7 +94,6 @@ def list_triangles(edge_table,rel_table,edges):
             for third in list(both):
                 for r1 in rel_table[(h,third)]:
                     for r2 in rel_table[(t,third)]:
-                        print( ( h, t, third ), ( r, r1, r2 ) )
                         yield [ ( h, t, third ), ( r, r1, r2 ) ]
                         i += 1
                 if i==0:
@@ -153,7 +152,7 @@ if args.mode == 'count_motifs':
         print( 'sampling', maxN, 'out of', len(train['head']) )
         some = some_triples( train, sample )
     else:
-        some = train
+        some = triples( [train] )
     triangles = []
     motif_count = dict()
     for tri in list_triangles( edge_table, rel_table, some ):
