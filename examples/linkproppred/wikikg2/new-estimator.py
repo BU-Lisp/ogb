@@ -88,6 +88,7 @@ def list_triangles(edge_table,rel_table,edges):
             for third in list(both):
                 for r1 in rel_table[(h,third)]:
                     for r2 in rel_table[(t,third)]:
+                        print( ( h, t, third ), ( r, r1, r2 ) )
                         yield [ ( h, t, third ), ( r, r1, r2 ) ]
                         i += 1
                 if i==0:
@@ -144,6 +145,7 @@ if args.mode == 'count_motifs':
     for tri in list_triangles( edge_table, rel_table, some ):
         triangles.append(tri[1])
         m = tri[1]
+        print(m)
         mid = (m[0], m[1], m[2])
         motif_count[mid] = motif_count.setdefault(mid,0) + 1
     print( np.trim_zeros(motifs_per_edge_histogram,'b') )
