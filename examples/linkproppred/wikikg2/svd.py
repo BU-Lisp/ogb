@@ -25,7 +25,7 @@ def parse_args(args=None):
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('-u', '--use_testset_negatives', action='store_true')
-    parser.add_argument('-F', '--Fmodel', action='store_true')
+    parser.add_argument('-h', '--hist', action='store_true')
     parser.add_argument('--Fmodel_separate', action='store_true')
 
     return parser.parse_args(args)
@@ -45,8 +45,9 @@ data_array = np.array( data, dtype=float )
 
 print( 'data array', data_array.shape )
 
-nonzero_items = np.sum(data_array,axis=0)
-print( '(#models): (#items)', np.unique(nonzero_items,return_counts=True) )
+if args.hist:
+    nonzero_items = np.sum(data_array,axis=0)
+    print( '(#models): (#items)', np.unique(nonzero_items,return_counts=True) )
 
 u,s,vt = svds( data_array, k=min(k,len(args.files)) )
 
@@ -58,7 +59,7 @@ print('v mean', np.mean(vt,axis=1))
 print('v sd', np.std(vt,axis=1))
 print('u*100:')
 for i in range(len(args.files)):
-    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), np.mean(data_array,axis=1)[i], u[i,:]*100)
+    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), '%2.2f' % np.mean(data_array,axis=1)[i]*100, u[i,:]*100)
 
 
 # compare to randomly shuffled
