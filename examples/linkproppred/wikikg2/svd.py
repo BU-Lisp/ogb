@@ -21,7 +21,7 @@ def parse_args(args=None):
     parser.add_argument('-m', '--mode', type=str, help='svd')
     parser.add_argument('--split', type=str, default='time')
     parser.add_argument('--newsplit', type=str)
-    parser.add_argument('--maxN', type=int, default=500)
+    parser.add_argument('-k', type=int, default=10)
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('-u', '--use_testset_negatives', action='store_true')
@@ -32,7 +32,7 @@ def parse_args(args=None):
 
 args = parse_args()
 
-np.set_printoptions( linewidth=120, precision=4 )
+np.set_printoptions( linewidth=150, precision=3 )
 
 def read_file(file):
     with open(file,"r") as input:
@@ -44,7 +44,10 @@ data_array = np.array( data, dtype=float )
 
 print( 'data array', data_array.shape )
 
-u,s,vt = svds( data_array, k=min(6,len(args.files)) )
+nonzero_items = np.sum(data_array,axis=0)
+print( '(#models): (#items)', np.unique(nonzero_items,return_counts=True) )
+
+u,s,vt = svds( data_array, k=min(k,len(args.files)) )
 
 print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
@@ -52,18 +55,18 @@ for f in args.files:
     print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', f ) )
     
 print('s', s)
-print('u', u)
+print('u*100', u*100)
 
 # compare to randomly shuffled
 
-print( data_array[:,0:4] )
+#print( data_array[:,0:4] )
 
 for i in range(data_array.shape[1]):
     np.random.shuffle(data_array[:,i])
 
-print( data_array[:,0:4] )
+#print( data_array[:,0:4] )
 
-u,s,vt = svds( data_array, k=min(6,len(args.files)) )
+u,s,vt = svds( data_array, k=min(k,len(args.files)) )
 
 print('random s', s)
 
