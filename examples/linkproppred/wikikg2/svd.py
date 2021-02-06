@@ -40,7 +40,7 @@ print( 'data array', data.array )
 
 u,s,vt = svds( data.array, k=min(10,len(args.files)) )
 
-print( 'input type:', re.sub('.*/', '', args.files[0] )
+print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
 for f in args.files:
     print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', f ) )
