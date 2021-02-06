@@ -40,7 +40,7 @@ def read_file(file):
     
 data = [ read_file(file) for file in args.files ]
 
-data_array = np.array( data )
+data_array = np.array( data, dtype=float )
 
 print( 'data array', data_array.shape )
 
