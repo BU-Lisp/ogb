@@ -35,7 +35,7 @@ args = parse_args()
 def read_file(file):
     with open(file,"r") as input:
         l = [int(n) for n in input.read().split()]
-        print len(l)
+        print( len(l) )
         return l
     
 data = [ read_file(file) for file in args.files ]
