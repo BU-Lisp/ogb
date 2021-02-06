@@ -38,11 +38,11 @@ def read_file(file):
     
 data = [ read_file(file) for file in args.files ]
 
-data.array = np.array( data )
+data_array = np.array( data )
 
 print( 'data array', data.array )
 
-u,s,vt = svds( data.array, k=min(10,len(args.files)) )
+u,s,vt = svds( data_array, k=min(10,len(args.files)) )
 
 print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
