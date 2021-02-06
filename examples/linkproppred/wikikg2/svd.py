@@ -32,7 +32,11 @@ def parse_args(args=None):
 
 args = parse_args()
 
-data = [ np.loadtxt(file).flatten() for file in args.files ]
+def read_file(file):
+    with open(file,"r") as input:
+        return np.fromstring(input.read())
+    
+data = [ read_file(file) for file in args.files ]
 
 data.array = np.array( data )
 
