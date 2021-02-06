@@ -52,15 +52,14 @@ u,s,vt = svds( data_array, k=min(k,len(args.files)) )
 
 print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
-for f in args.files:
-    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', f ) )
     
 print('factors:', s)
-print('u*100', u*100)
-print(vt.shape)
-# mean and sd for each factor over items
 print('v mean', np.mean(vt,axis=1))
 print('v sd', np.std(vt,axis=1))
+print('u*100:')
+for i in range(len(args.files)):
+    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), u[i,:]*100)
+
 
 # compare to randomly shuffled
 
@@ -74,6 +73,7 @@ for i in range(data_array.shape[1]):
 u,s,vt = svds( data_array, k=min(k,len(args.files)) )
 
 print('random s', s)
-print('random u*100', u*100)
+print('random u*100 mean', np.mean(u*100,axis=0))
+print('random u*100 sd', np.std(u*100,axis=0))
 print('random v mean', np.mean(vt,axis=1))
 print('random v sd', np.std(vt,axis=1))
