@@ -32,6 +32,8 @@ def parse_args(args=None):
 
 args = parse_args()
 
+numpy.set_printoptions( linewidth=120, precision=4 )
+
 def read_file(file):
     with open(file,"r") as input:
         return [int(n) for n in input.read().split()]
