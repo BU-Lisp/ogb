@@ -34,7 +34,7 @@ args = parse_args()
 
 def read_file(file):
     with open(file,"r") as input:
-        return np.fromstring(input.read())
+        return map( int, input.read().split() )
     
 data = [ read_file(file) for file in args.files ]
 
