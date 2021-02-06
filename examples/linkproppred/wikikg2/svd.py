@@ -31,6 +31,7 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 args = parse_args()
+k = args.k
 
 np.set_printoptions( linewidth=150, precision=3 )
 
