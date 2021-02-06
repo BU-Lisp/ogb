@@ -35,15 +35,17 @@ args = parse_args()
 make_data = True
 newsplit = args.newsplit
 
-data <- [ np.loadtxt(file).flatten() for file in args.files ]
+data = [ np.loadtxt(file).flatten() for file in args.files ]
 
-data.array <- np.array( data )
+data.array = np.array( data )
 
 print( 'data array', data.array )
 
-u,s,vt <- svds( data.array, k=min(10,len(args.files)) )
+u,s,vt = svds( data.array, k=min(10,len(args.files)) )
 
-print( args.files )
+for f in args.files:
+    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', f ) )
+    
 print('s', s)
 print('u', u)
 
