@@ -33,7 +33,7 @@ def parse_args(args=None):
 args = parse_args()
 k = args.k
 
-np.set_printoptions( linewidth=150, precision=3 )
+np.set_printoptions( linewidth=150, precision=3, suppress=True )
 
 def read_file(file):
     with open(file,"r") as input:
@@ -55,8 +55,12 @@ print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 for f in args.files:
     print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', f ) )
     
-print('s', s)
+print('factors:', s)
 print('u*100', u*100)
+print(vt.shape)
+# mean and sd for each factor over items
+print('v mean', np.mean(vt,axis=1))
+print('v sd', np.std(vt,axis=1))
 
 # compare to randomly shuffled
 
@@ -70,4 +74,6 @@ for i in range(data_array.shape[1]):
 u,s,vt = svds( data_array, k=min(k,len(args.files)) )
 
 print('random s', s)
-
+print('random u*100', u*100)
+print('random v mean', np.mean(vt,axis=1))
+print('random v sd', np.std(vt,axis=1))
