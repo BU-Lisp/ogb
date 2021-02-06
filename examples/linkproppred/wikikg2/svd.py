@@ -44,7 +44,7 @@ data_array = np.array( data, dtype=float )
 
 print( 'data array', data_array.shape )
 
-u,s,vt = svds( data_array, k=min(10,len(args.files)) )
+u,s,vt = svds( data_array, k=min(6,len(args.files)) )
 
 print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
@@ -56,14 +56,14 @@ print('u', u)
 
 # compare to randomly shuffled
 
-print( data_array[range(5),range(5)] )
+print( data_array[0:4,0:4] )
 
 for i in range(data_array.shape[1]):
     np.random.shuffle(data_array[:,i])
 
-print( data_array[range(5),range(5)] )
+print( data_array[0:4,0:4] )
 
-u,s,vt = svds( data_array, k=min(10,len(args.files)) )
+u,s,vt = svds( data_array, k=min(6,len(args.files)) )
 
 print('random s', s)
 
