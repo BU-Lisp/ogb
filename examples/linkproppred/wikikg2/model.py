@@ -97,13 +97,13 @@ class KGEModel(nn.Module):
 
 
         #Do not forget to modify this line when you add a new model in the "forward" function
-        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F']:
+        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F', 'RE', 'NetRE']:
             raise ValueError('model %s not supported' % model_name)
             
         if model_name in ['RotatE','Groups'] and (not double_entity_embedding or double_relation_embedding):
             raise ValueError('RotatE should use --double_entity_embedding')
 
-        if model_name == 'ComplEx' and (not double_entity_embedding or not double_relation_embedding):
+        if model_name in ['ComplEx','NetRE'] and (not double_entity_embedding or not double_relation_embedding):
             raise ValueError('ComplEx should use --double_entity_embedding and --double_relation_embedding')
 
         if model_name in ['PairRE','F','RE'] and not double_relation_embedding:
@@ -201,6 +201,7 @@ class KGEModel(nn.Module):
             'Groups': self.Groups,
             'F': self.F,
             'RE': self.F,
+            'NetRE': self.NetRE,
         }
         
         if self.model_name in model_func:
@@ -314,6 +315,14 @@ class KGEModel(nn.Module):
         else:
             score = tail * re_tail
         return torch.sum(score, dim=2)
+
+    def NetRE(self, head, relation, tail, mode):
+        head_n, head_r = torch.chunk(head, 2, dim=2)
+        tail_n, tail_r = torch.chunk(tail, 2, dim=2)
+        score1 = self.BasE(head_n, relation, tail_n, mode)
+        score2 = self.F(head_r, relation, tail_r, mode)
+        return score1 + score2
+
 
     
     @staticmethod
