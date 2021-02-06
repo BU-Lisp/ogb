@@ -59,7 +59,7 @@ print('v mean', np.mean(vt,axis=1))
 print('v sd', np.std(vt,axis=1))
 print('u*100:')
 for i in range(len(args.files)):
-    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), '%2.2f' % np.mean(data_array,axis=1)[i]*100, u[i,:]*100)
+    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % np.mean(data_array,axis=1)[i]*100), u[i,:]*100)
 
 
 # compare to randomly shuffled
