@@ -25,7 +25,7 @@ def parse_args(args=None):
     parser.add_argument('--sample_fraction', type=float, default=0.5, help='fraction to take which are tails of the relation')
     parser.add_argument('--write_train_totals', action='store_true')
     parser.add_argument('-u', '--use_testset_negatives', action='store_true')
-    parser.add_argument('-h', '--hist', action='store_true')
+    parser.add_argument('--hist', action='store_true')
     parser.add_argument('--Fmodel_separate', action='store_true')
 
     return parser.parse_args(args)
