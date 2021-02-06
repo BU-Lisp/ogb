@@ -34,9 +34,7 @@ args = parse_args()
 
 def read_file(file):
     with open(file,"r") as input:
-        l = [int(n) for n in input.read().split()]
-        print( len(l) )
-        return l
+        return [int(n) for n in input.read().split()]
     
 data = [ read_file(file) for file in args.files ]
 
@@ -54,4 +52,16 @@ for f in args.files:
 print('s', s)
 print('u', u)
 
+# compare to randomly shuffled
+
+print( data_array[range(5),range(5)] )
+
+for i in range(data_array.shape[1]):
+    np.random.shuffle(data_array[:,i])
+
+print( data_array[range(5),range(5)] )
+
+u,s,vt = svds( data_array, k=min(10,len(args.files)) )
+
+print('random s', s)
 
