@@ -56,12 +56,12 @@ print('u', u)
 
 # compare to randomly shuffled
 
-print( data_array[0:4,0:4] )
+print( data_array[:,0:4] )
 
 for i in range(data_array.shape[1]):
     np.random.shuffle(data_array[:,i])
 
-print( data_array[0:4,0:4] )
+print( data_array[:,0:4] )
 
 u,s,vt = svds( data_array, k=min(6,len(args.files)) )
 
