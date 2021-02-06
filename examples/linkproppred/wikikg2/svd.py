@@ -40,7 +40,7 @@ data = [ read_file(file) for file in args.files ]
 
 data_array = np.array( data )
 
-print( 'data array', data.array )
+print( 'data array', data_array.shape, data_array )
 
 u,s,vt = svds( data_array, k=min(10,len(args.files)) )
 
