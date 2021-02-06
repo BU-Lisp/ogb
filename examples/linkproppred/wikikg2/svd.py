@@ -34,13 +34,13 @@ args = parse_args()
 
 def read_file(file):
     with open(file,"r") as input:
-        return list(map( int, input.read().split() ))
+        return [int(n) for n in input.read().split()]
     
 data = [ read_file(file) for file in args.files ]
 
 data_array = np.array( data )
 
-print( 'data array', data_array.shape, data_array )
+print( 'data array', data_array.shape )
 
 u,s,vt = svds( data_array, k=min(10,len(args.files)) )
 
