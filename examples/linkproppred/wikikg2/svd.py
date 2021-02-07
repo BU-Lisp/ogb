@@ -30,8 +30,22 @@ def parse_args(args=None):
 
     return parser.parse_args(args)
 
+def analyze( arr, k, label='' ):
+    u,s,vt = svds( arr, k=min(arr.shape) )
+    s_sum = np.sum(s)
+    ind = np.argsort(-s)[0:k]
+    perf_all = s * np.sum(vt,axis=1) * 100
+    u,s,vt,perf = u[:,ind], s[ind], vt[:,ind], perf_all[ind]
+    print(label, 'factors', np.sum(s), s)
+    print(label, 'perf', np.sum(perf_all), perf)
+    for i in range(len(args.files)):
+        print( label, re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % (np.mean(data_array,axis=1)[i]*100)), u[i,:]*perf)
+    
+
 args = parse_args()
-k = args.k
+k = min( args.k,len(args.files) )
+
+print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
 np.set_printoptions( linewidth=150, precision=3, suppress=True )
 
@@ -49,32 +63,11 @@ if args.hist:
     nonzero_items = np.sum(data_array,axis=0)
     print( '(#models): (#items)', np.unique(nonzero_items,return_counts=True) )
 
-u,s,vt = svds( data_array, k=min(k,len(args.files)) )
-
-print( 'input type:', re.sub('.*/', '', args.files[0] ) )
-
-    
-print('factors:', s)
-print('v mean', np.mean(vt,axis=1))
-print('v sd', np.std(vt,axis=1))
-print('u*100:')
-for i in range(len(args.files)):
-    print( re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % (np.mean(data_array,axis=1)[i]*100)), u[i,:]*100)
-
+analyze( data_array, k, '' )
 
 # compare to randomly shuffled
-
-#print( data_array[:,0:4] )
 
 for i in range(data_array.shape[1]):
     np.random.shuffle(data_array[:,i])
 
-#print( data_array[:,0:4] )
-
-u,s,vt = svds( data_array, k=min(k,len(args.files)) )
-
-print('random s', s)
-print('random u*100 mean', np.mean(u*100,axis=0))
-print('random u*100 sd', np.std(u*100,axis=0))
-print('random v mean', np.mean(vt,axis=1))
-print('random v sd', np.std(vt,axis=1))
+analyze( data_array, k, 'random' )
