@@ -36,7 +36,8 @@ def analyze( arr, k, label='' ):
     s_sum = np.sum(s_all)
     ind = np.argsort(-s_all)[0:k]
     perf_all = s_all * np.mean(vt,axis=1) * 100
-    u,s,vt,perf = u[:,ind], s_all[ind], vt[:,ind], perf_all[ind]
+    print( vt.shape )
+    u,s,vt,perf = u[:,ind], s_all[ind], vt[ind,:], perf_all[ind]
     print(label, 'factors', np.sum(s), s)
     print(label, 'perf', np.sum(perf_all), perf)
     if label!='random':
