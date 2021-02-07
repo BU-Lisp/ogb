@@ -38,8 +38,9 @@ def analyze( arr, k, label='' ):
     u,s,vt,perf = u[:,ind], s_all[ind], vt[:,ind], perf_all[ind]
     print(label, 'factors', np.sum(s), s)
     print(label, 'perf', np.sum(perf_all), perf)
-    for i in range(len(args.files)):
-        print( label, re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % (np.mean(data_array,axis=1)[i]*100)), u[i,:]*perf)
+    if label!='random':
+        for i in range(len(args.files)):
+            print( label, re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % (np.mean(data_array,axis=1)[i]*100)), u[i,:]*perf)
     return s_all
 
 args = parse_args()
