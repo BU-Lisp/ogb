@@ -43,7 +43,7 @@ def analyze( arr, k, label='' ):
     
 
 args = parse_args()
-k = min( args.k,len(args.files) )
+k = min( args.k,len(args.files) )-1
 
 print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
