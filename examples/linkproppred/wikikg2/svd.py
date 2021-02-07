@@ -33,7 +33,7 @@ def parse_args(args=None):
 def analyze( arr, k, label='' ):
     u,s_all,vt = svds( arr, k=k )
     s_sum = np.sum(s_all)
-    ind = np.argsort(-s)[0:k]
+    ind = np.argsort(-s_all)[0:k]
     perf_all = s_all * np.mean(vt,axis=1) * 100
     u,s,vt,perf = u[:,ind], s_all[ind], vt[:,ind], perf_all[ind]
     print(label, 'factors', np.sum(s), s)
