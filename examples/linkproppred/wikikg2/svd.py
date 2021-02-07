@@ -31,19 +31,19 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 def analyze( arr, k, label='' ):
-    u,s,vt = svds( arr, k=k )
-    s_sum = np.sum(s)
+    u,s_all,vt = svds( arr, k=k )
+    s_sum = np.sum(s_all)
     ind = np.argsort(-s)[0:k]
-    perf_all = s * np.sum(vt,axis=1) * 100
-    u,s,vt,perf = u[:,ind], s[ind], vt[:,ind], perf_all[ind]
+    perf_all = s_all * np.mean(vt,axis=1) * 100
+    u,s,vt,perf = u[:,ind], s_all[ind], vt[:,ind], perf_all[ind]
     print(label, 'factors', np.sum(s), s)
     print(label, 'perf', np.sum(perf_all), perf)
     for i in range(len(args.files)):
         print( label, re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % (np.mean(data_array,axis=1)[i]*100)), u[i,:]*perf)
-    
+    return s_all
 
 args = parse_args()
-k = min( args.k,len(args.files) )-1
+k = min( args.k+1,len(args.files) )-1
 
 print( 'input type:', re.sub('.*/', '', args.files[0] ) )
 
@@ -63,11 +63,13 @@ if args.hist:
     nonzero_items = np.sum(data_array,axis=0)
     print( '(#models): (#items)', np.unique(nonzero_items,return_counts=True) )
 
-analyze( data_array, k, '' )
+s_all = analyze( data_array, k, '' )
 
 # compare to randomly shuffled
 
 for i in range(data_array.shape[1]):
     np.random.shuffle(data_array[:,i])
 
-analyze( data_array, k, 'random' )
+s_rand = analyze( data_array, k, 'random' )
+
+print( np.count_nonzero(s_all > s_rand[1]), 'significant factors' ) # should use TW dist
