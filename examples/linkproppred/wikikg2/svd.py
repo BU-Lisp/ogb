@@ -41,7 +41,7 @@ def analyze( arr, k, label='' ):
     print(label, 'perf', np.sum(perf_all), perf)
     if label!='random':
         if args.print_v0:
-            print( vt[:,0] )
+            print( vt[0,:] )
         for i in range(len(args.files)):
             print( label, re.sub( '-extra/hits1.(head|tail)-batch.txt', '', args.files[i] ), ('%2.2f' % (np.mean(data_array,axis=1)[i]*100)), u[i,:]*perf)
     return s_all
