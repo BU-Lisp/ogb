@@ -31,7 +31,7 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 def analyze( arr, k, label='' ):
-    u,s,vt = svds( arr, k=min(arr.shape) )
+    u,s,vt = svds( arr, k=k )
     s_sum = np.sum(s)
     ind = np.argsort(-s)[0:k]
     perf_all = s * np.sum(vt,axis=1) * 100
