@@ -97,14 +97,14 @@ class KGEModel(nn.Module):
 
 
         #Do not forget to modify this line when you add a new model in the "forward" function
-        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F', 'RE', 'NetRE']:
+        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F', 'RE', 'NetRE', 'EE', 'ERE']:
             raise ValueError('model %s not supported' % model_name)
             
-        if model_name in ['RotatE','Groups'] and (not double_entity_embedding or double_relation_embedding):
-            raise ValueError('RotatE should use --double_entity_embedding')
+        if model_name in ['RotatE','Groups','EE'] and (not double_entity_embedding or double_relation_embedding):
+            raise ValueError('%s should use --double_entity_embedding' % model_name)
 
-        if model_name in ['ComplEx','NetRE'] and (not double_entity_embedding or not double_relation_embedding):
-            raise ValueError('ComplEx should use --double_entity_embedding and --double_relation_embedding')
+        if model_name in ['ComplEx','NetRE','ERE'] and (not double_entity_embedding or not double_relation_embedding):
+            raise ValueError('%s should use --double_entity_embedding and --double_relation_embedding' % model_name)
 
         if model_name in ['PairRE','F','RE'] and not double_relation_embedding:
             raise ValueError('PairRE and F/RE should use --double_relation_embedding')
@@ -199,8 +199,10 @@ class KGEModel(nn.Module):
             'PairRE': self.PairRE,
             'TuckER': self.TuckER,
             'Groups': self.Groups,
-            'F': self.F,
-            'RE': self.F,
+            'F': self.RE,
+            'RE': self.RE,
+            'EE': self.EE,
+            'ERE': self.ERE,
             'NetRE': self.NetRE,
         }
         
@@ -308,13 +310,26 @@ class KGEModel(nn.Module):
             score = torch.einsum( 'htr,bih,bnt,bir->bn', self.tensor_weights, head, tail, relation )
         return self.gamma.item() - score
 
-    def F(self, head, relation, tail, mode):
+    def RE(self, head, relation, tail, mode):
         re_head, re_tail = torch.chunk(relation, 2, dim=2)
         if mode == 'head-batch':
             score = head * re_head
         else:
             score = tail * re_tail
         return torch.sum(score, dim=2)
+
+    def EE(self, head, relation, tail, mode):
+        emb_head, foo = torch.chunk(head, 2, dim=2)
+        bar, emb_tail = torch.chunk(tail, 2, dim=2)
+        score = emb_head * emb_tail
+        return torch.sum(score, dim=2)
+
+    def ERE(self, head, relation, tail, mode):
+        emb_head, foo = torch.chunk(head, 2, dim=2)
+        bar, emb_tail = torch.chunk(tail, 2, dim=2)
+        score1 = torch.sum(emb_head * emb_tail, dim=2)
+        score2 = self.RE(emb_head, relation, emb_tail, mode)
+        return score1 + self.gamma.item() * score2
 
     def NetRE(self, head, relation, tail, mode):
         head_n, head_r = torch.chunk(head, 2, dim=2)
