@@ -1,6 +1,7 @@
 '''
 Analyze embeddings.
 Can also relate to numbers of motifs.
+To add: check entity embeddings to see how well they correspond to motif embeddings.
 '''
 
 import numpy as np

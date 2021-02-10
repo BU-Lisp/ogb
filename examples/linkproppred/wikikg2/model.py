@@ -97,7 +97,7 @@ class KGEModel(nn.Module):
 
 
         #Do not forget to modify this line when you add a new model in the "forward" function
-        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F', 'RE', 'NetRE', 'EE', 'ERE']:
+        if model_name not in ['Base', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'PairRE', 'TuckER', 'Groups', 'F', 'RE', 'NetRE', 'EE', 'ERE','ProjRE']:
             raise ValueError('model %s not supported' % model_name)
             
         if model_name in ['RotatE','Groups','EE'] and (not double_entity_embedding or double_relation_embedding):
@@ -106,7 +106,7 @@ class KGEModel(nn.Module):
         if model_name in ['ComplEx','NetRE','ERE'] and (not double_entity_embedding or not double_relation_embedding):
             raise ValueError('%s should use --double_entity_embedding and --double_relation_embedding' % model_name)
 
-        if model_name in ['PairRE','F','RE'] and not double_relation_embedding:
+        if model_name in ['PairRE','F','RE','ProjRE'] and not double_relation_embedding:
             raise ValueError('PairRE and F/RE should use --double_relation_embedding')
 
         self.evaluator = evaluator
@@ -199,6 +199,7 @@ class KGEModel(nn.Module):
             'PairRE': self.PairRE,
             'TuckER': self.TuckER,
             'Groups': self.Groups,
+            'ProjRE': self.ProjRE,
             'F': self.RE,
             'RE': self.RE,
             'EE': self.EE,
@@ -293,6 +294,18 @@ class KGEModel(nn.Module):
         score = self.gamma.item() - torch.norm(score, p=1, dim=2)
         return score
 
+    def ProjRE(self, head, relation, tail, mode):
+        re_proj, re_tran = torch.chunk(relation, 2, dim=2)
+        head = F.normalize(head, 2, -1)
+        tail = F.normalize(tail, 2, -1)
+        if mode == 'head-batch':
+            score = head + (re_tran - tail)
+        else:
+            score = (head + re_tran) - tail
+        score = re_proj * score
+        score = self.gamma.item() - torch.norm(score, p=1, dim=2)
+        return score
+
     def Groups(self, head, relation, tail, mode):
         head_h, head_t = torch.chunk(head, 2, dim=2)
         tail_h, tail_t = torch.chunk(tail, 2, dim=2)
@@ -335,7 +348,7 @@ class KGEModel(nn.Module):
         head_n, head_r = torch.chunk(head, 2, dim=2)
         tail_n, tail_r = torch.chunk(tail, 2, dim=2)
         score1 = self.BasE(head_n, relation, tail_n, mode)
-        score2 = self.F(head_r, relation, tail_r, mode)
+        score2 = self.RE(head_r, relation, tail_r, mode)
         return score1 + score2
 
 
